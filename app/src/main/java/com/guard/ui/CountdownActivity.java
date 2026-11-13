@@ -165,6 +165,10 @@ public class CountdownActivity extends AppCompatActivity {
         int fg = ContextCompat.getColor(this, helpComing ? R.color.white : R.color.guard_ink);
         findViewById(R.id.root).setBackgroundColor(bg);
         getWindow().getDecorView().setBackgroundColor(bg);
+        getWindow().setStatusBarColor(bg);
+        // Tela clara (cancelado) precisa de ícones escuros na barra de status.
+        new androidx.core.view.WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView())
+                .setAppearanceLightStatusBars(!helpComing);
 
         TextView h = findViewById(R.id.txt_end_header);
         TextView t = findViewById(R.id.txt_end_title);
