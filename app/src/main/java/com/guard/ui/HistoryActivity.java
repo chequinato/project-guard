@@ -47,7 +47,7 @@ public class HistoryActivity extends AppCompatActivity {
             boolean hadAlert = trip.getAlertCount() > 0;
             alerts.setText(hadAlert ? trip.getAlertCount() + " alert" + (trip.getAlertCount() > 1 ? "s" : "") : "Safe");
             alerts.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, hadAlert ? R.color.guard_alert : R.color.guard_ok)));
+                    ContextCompat.getColor(this, hadAlert ? R.color.guard_alert_dark : R.color.guard_ok_dark)));
 
             list.addView(row);
             totalAlerts += trip.getAlertCount();

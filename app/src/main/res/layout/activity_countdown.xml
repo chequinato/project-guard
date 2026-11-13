@@ -5,7 +5,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/guard_alert"
+    android:background="@color/guard_alert_dark"
     android:fitsSystemWindows="true">
 
     <!-- Painel 1: contagem regressiva -->
@@ -97,7 +97,7 @@
             android:layout_height="72dp"
             android:backgroundTint="@color/white"
             android:text="@string/im_ok"
-            android:textColor="@color/guard_alert_dark"
+            android:textColor="@color/guard_alert_deep"
             android:textSize="22sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -176,7 +176,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
             android:text="@string/contact_confirmed"
-            android:textColor="@color/guard_alert_dark" />
+            android:textColor="@color/guard_alert_deep" />
 
         <Button
             android:id="@+id/btn_cancel_alert"

@@ -20,8 +20,8 @@
     </style>
 
     <style name="Theme.Guard.Alert" parent="Theme.Guard">
-        <item name="android:windowBackground">@color/guard_alert</item>
-        <item name="android:statusBarColor">@color/guard_alert</item>
+        <item name="android:windowBackground">@color/guard_alert_dark</item>
+        <item name="android:statusBarColor">@color/guard_alert_dark</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 

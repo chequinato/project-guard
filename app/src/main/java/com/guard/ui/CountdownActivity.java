@@ -161,7 +161,7 @@ public class CountdownActivity extends AppCompatActivity {
         panelAlert.setVisibility(View.GONE);
         panelEnd.setVisibility(View.VISIBLE);
 
-        int bg = ContextCompat.getColor(this, helpComing ? R.color.guard_ok : R.color.guard_page);
+        int bg = ContextCompat.getColor(this, helpComing ? R.color.guard_ok_dark : R.color.guard_page);
         int fg = ContextCompat.getColor(this, helpComing ? R.color.white : R.color.guard_ink);
         findViewById(R.id.root).setBackgroundColor(bg);
         getWindow().getDecorView().setBackgroundColor(bg);
