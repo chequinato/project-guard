@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class GuardDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "guard.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_CONTACTS = "emergency_contacts";
     public static final String TABLE_TRIPS = "trips";
@@ -55,6 +55,18 @@ public class GuardDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_CONTACTS);
         db.execSQL(CREATE_TRIPS);
+        seedDemoContacts(db);
+    }
+
+    /**
+     * Contatos de demonstração (os mesmos do site), para a apresentação já abrir pronta.
+     * Os números são fictícios. Para começar vazio, apague esta chamada no onCreate.
+     */
+    private static void seedDemoContacts(SQLiteDatabase db) {
+        String sql = "INSERT INTO " + TABLE_CONTACTS + " (name, phone, relationship, priority) VALUES (?, ?, ?, ?)";
+        db.execSQL(sql, new Object[]{"Ana", "+5511900000001", "Sister", 1});
+        db.execSQL(sql, new Object[]{"Dad", "+5511900000002", "Father", 2});
+        db.execSQL(sql, new Object[]{"Bruno", "+5511900000003", "Friend", 3});
     }
 
     @Override

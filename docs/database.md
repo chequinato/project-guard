@@ -25,6 +25,8 @@ Para ver o banco enquanto o app roda: Android Studio → **App Inspection** → 
 | max_speed_kmh | REAL | velocidade máxima |
 | alert_count | INTEGER | quantos possíveis acidentes foram detectados |
 
+Na primeira execução o banco já vem com 3 contatos de demonstração (Ana, Dad, Bruno, números fictícios), em `GuardDatabaseHelper.seedDemoContacts`.
+
 Nome do usuário e veículo escolhido ficam em `SettingsStore` (SharedPreferences), porque são só dois valores e não precisam de tabela.
 
 ## Por que tão simples?
