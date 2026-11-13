@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Guard</string>
+    <string name="slogan">Help arrives even when you can\'t ask for it.</string>
+
+    <!-- New trip -->
+    <string name="new_trip">New trip</string>
+    <string name="ready_title">Ready to ride?</string>
+    <string name="vehicle">Vehicle</string>
+    <string name="car">Car</string>
+    <string name="motorcycle">Motorcycle</string>
+    <string name="bicycle">Bicycle</string>
+    <string name="alert_order">Alert order</string>
+    <string name="edit">Edit</string>
+    <string name="no_contacts">No emergency contacts yet. Add at least one before your trip.</string>
+    <string name="start_trip">Start trip</string>
+    <string name="history">History</string>
+
+    <!-- Trip mode -->
+    <string name="monitoring">Monitoring</string>
+    <string name="kmh">km/h</string>
+    <string name="impact">Impact</string>
+    <string name="rotation">Rotation</string>
+    <string name="speed_drop">Speed drop</string>
+    <string name="stillness">Stillness</string>
+    <string name="demo_title">Demo · simulate a situation</string>
+    <string name="end_trip">End trip</string>
+
+    <!-- Countdown / alert -->
+    <string name="possible_accident">Possible accident</string>
+    <string name="alarm_on">Alarm on</string>
+    <string name="are_you_ok">Are you OK?</string>
+    <string name="im_ok">I\'m OK</string>
+    <string name="alert_sent">Alert sent</string>
+    <string name="live_location">Live location</string>
+    <string name="contact_confirmed">Contact replied: on the way</string>
+    <string name="cancel_alert">I\'m OK, cancel alert</string>
+    <string name="glad_ok">Glad you\'re OK.</string>
+    <string name="no_message_sent">No message was sent. The event will be saved in your trip history.</string>
+    <string name="help_coming">Help is coming</string>
+    <string name="back_to_trip">Back to trip</string>
+
+    <!-- Contacts -->
+    <string name="contacts_title">Who should we call?</string>
+    <string name="contacts_hint">Tap a contact to remove it. Priority 1 hears first.</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="relationship">Relationship (optional)</string>
+    <string name="add_contact">+ Add contact</string>
+
+    <!-- History -->
+    <string name="your_trips">Your trips</string>
+    <string name="history_empty">No trips yet. Finish a trip and it shows up here.</string>
+    <string name="back">← Back</string>
+</resources>
