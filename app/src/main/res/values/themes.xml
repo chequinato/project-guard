@@ -26,14 +26,14 @@
     </style>
 
     <!-- Estilos de texto reutilizados -->
-    <style name="Guard.Title">
+    <style name="Guard.Title" parent="">
         <item name="android:textSize">30sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/guard_ink</item>
         <item name="android:letterSpacing">-0.02</item>
     </style>
 
-    <style name="Guard.Label">
+    <style name="Guard.Label" parent="">
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.06</item>
