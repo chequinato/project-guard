@@ -1,4 +1,4 @@
-package com.guard.ui;
+package com.guard.ui.contacts;
 
 import android.os.Bundle;
 import android.view.View;
@@ -13,13 +13,17 @@ import com.guard.GuardApplication;
 import com.guard.R;
 import com.guard.data.ContactDao;
 import com.guard.model.EmergencyContact;
+import com.guard.ui.common.ContactViews;
 
-/** Tela 4 · "Who should we call?": lista, adiciona e remove contatos de emergência. */
+/**
+ * Tela 4 · "Who should we call?" (layout: activity_contacts.xml).
+ * Lista, adiciona e remove contatos de emergência.
+ */
 public class ContactsActivity extends AppCompatActivity {
 
     private ContactDao dao;
     private LinearLayout list;
-    private EditText inputName, inputPhone, inputRelationship;
+    private EditText inputName, inputPhone, inputRelationship;   // EditText = campo de digitação
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class ContactsActivity extends AppCompatActivity {
         render();
     }
 
+    /** Redesenha a lista a partir do banco. Tocar num contato pergunta se quer removê-lo. */
     private void render() {
         list.removeAllViews();
         for (EmergencyContact c : dao.findAllByPriority()) {
@@ -48,31 +53,37 @@ public class ContactsActivity extends AppCompatActivity {
 
     private void addContact() {
         try {
-            // A validação mora no modelo (encapsulamento): se algo estiver errado, o construtor reclama.
+            // A VALIDAÇÃO mora no modelo (encapsulamento): se algo estiver errado,
+            // o construtor de EmergencyContact lança uma exceção e caímos no catch.
             EmergencyContact contact = new EmergencyContact(
                     inputName.getText().toString(),
                     inputPhone.getText().toString(),
                     inputRelationship.getText().toString(),
                     dao.nextPriority());
             dao.insert(contact);
+
+            // Limpa o formulário e mostra a lista atualizada.
             inputName.setText("");
             inputPhone.setText("");
             inputRelationship.setText("");
             render();
         } catch (IllegalArgumentException e) {
+            // e.getMessage() é o texto que passamos no "throw new IllegalArgumentException(...)".
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
+    /** Caixa de diálogo "Remove Ana?" com os botões Remove / Cancel. */
     private void confirmRemove(EmergencyContact contact) {
+        // BUILDER: monta o objeto passo a passo, cada método devolve o próprio builder.
         new AlertDialog.Builder(this)
-                .setTitle("Remove " + contact.getName() + "?")
-                .setMessage("The others move up in the alert order.")
-                .setPositiveButton("Remove", (d, w) -> {
+                .setTitle(getString(R.string.remove_contact_title, contact.getName()))
+                .setMessage(R.string.remove_contact_text)
+                .setPositiveButton(R.string.remove, (dialog, which) -> {
                     dao.delete(contact);
                     render();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)   // null = só fecha
                 .show();
     }
 }

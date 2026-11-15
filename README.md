@@ -27,7 +27,7 @@ Website: [`docs/index.html`](docs/index.html) (can be published with GitHub Page
 Não precisa instalar banco de dados: o SQLite já vem no Android e o arquivo `guard.db` é criado sozinho na primeira execução.
 
 ### Roteiro da demo
-1. **New trip** → `Edit` → cadastre 2 ou 3 contatos.
+1. O app já abre com 3 contatos de demonstração (Ana, Dad, Bruno). Em **Edit** dá para adicionar ou remover.
 2. Escolha o veículo e toque em **Start trip**.
 3. Na tela escura, toque num cenário: `Real crash`, `Phone dropped`, `Hard brake`, `Speed bump`...
 4. No `Real crash` aparece **Are you OK?** com 30 s. Deixe zerar para ver o alerta e o escalonamento, ou toque **I'm OK**.
@@ -42,19 +42,46 @@ Durante a contagem, o alerta usa o canal `DemoAlert` (não envia SMS de verdade)
 ```
 project-guard/
 ├─ app/src/main/java/com/guard/
-│  ├─ model/       Classes do domínio: User, EmergencyContact, Vehicle (Car, Motorcycle, Bicycle),
-│  │               Trip, SensorReading, Incident
-│  ├─ sensor/      Observer: SensorMonitor, MockSensorSource (simulado), AndroidSensorSource (real)
-│  ├─ detection/   Strategy + polimorfismo: IncidentDetector e os 4 detectores, IncidentManager
-│  ├─ alert/       AlertChannel (SmsAlert, MessagingAppAlert, DemoAlert) e AlertService
-│  ├─ data/        SQLite: GuardDatabaseHelper, ContactDao, SettingsStore
-│  └─ ui/          Telas (Activities)
-├─ app/src/main/res/   Layouts, cores e textos (mesma paleta do site)
-├─ app/src/test/       Testes JUnit (rodam sem emulador)
-└─ docs/               Site, proposta, arquitetura e banco
+│  ├─ GuardApplication.java   Objeto do app inteiro: banco, preferências e a viagem em andamento
+│  ├─ model/                  O "domínio": os dados e suas regras
+│  │  ├─ vehicle/             HERANÇA: Vehicle (abstrata) → Car, Motorcycle, Bicycle + VehicleType
+│  │  ├─ User, EmergencyContact, Trip, SensorReading
+│  │  └─ Incident, IncidentStatus
+│  ├─ sensor/                 OBSERVER: SensorMonitor, SensorListener,
+│  │                          MockSensorSource (simulado) + Scenario, AndroidSensorSource (real)
+│  ├─ detection/              POLIMORFISMO + STRATEGY: IncidentDetector e os 4 detectores,
+│  │                          IncidentManager (a regra combinada)
+│  ├─ alert/                  AlertChannel (DemoAlert, SmsAlert, MessagingAppAlert) e AlertService
+│  ├─ session/                TripSession: liga sensor + detecção + viagem durante uma viagem
+│  ├─ data/                   SQLite (DAO): GuardDatabaseHelper, ContactDao, TripDao, TripRecord,
+│  │                          SettingsStore
+│  └─ ui/                     Uma pasta por tela
+│     ├─ home/                Tela 1 · New trip          (MainActivity)
+│     ├─ trip/                Tela 2 · Trip mode         (TripActivity)
+│     ├─ alert/               Tela 3 · Are you OK?       (AlertActivity)
+│     ├─ contacts/            Tela 4 · Contatos          (ContactsActivity)
+│     ├─ history/             Tela 5 · Histórico         (HistoryActivity)
+│     └─ common/              Peças usadas por mais de uma tela (ContactViews)
+├─ app/src/main/res/
+│  ├─ layout/                 O visual de cada tela (XML)
+│  └─ values/                 Textos (strings.xml), cores (colors.xml) e temas (themes.xml)
+├─ app/src/test/              Testes JUnit, na mesma divisão de pastas (rodam sem emulador)
+└─ docs/                      Site, proposta, arquitetura e banco
 ```
 
-As pastas `model`, `sensor`, `detection` e `alert` são **Java puro** (sem `import android`), por isso dá para testar tudo sem emulador. As classes que dependem do Android são só as `Android*`, `SmsAlert`, `MessagingAppAlert`, `data/` e `ui/`.
+**Regra de ouro da organização:** `model`, `sensor`, `detection`, `alert` e `session` são **Java puro** (sem `import android`). Por isso os 27 testes rodam no computador, sem emulador. Só `data/`, `ui/`, `AndroidSensorSource`, `SmsAlert` e `MessagingAppAlert` dependem do Android.
+
+**O código é comentado para estudo:** cada classe explica o conceito de POO que usa, e as linhas com algum recurso novo de Java (lambda, generics, `final`, try-with-resources...) têm um comentário explicando.
+
+### Caminho de uma leitura de sensor
+
+```
+MockSensorSource ──► IncidentManager ──► 4 detectores ──► regra ──► Incident
+       │                                                                │
+       ├──► Trip (guarda)                                    TripSession guarda o incidente ativo
+       └──► TripSession ──► TripActivity (desenha)                      │
+                                                     AlertActivity usa ESSE MESMO objeto
+```
 
 ## Conceitos de POO (onde estão)
 
@@ -65,7 +92,9 @@ As pastas `model`, `sensor`, `detection` e `alert` são **Java puro** (sem `impo
 | Abstração | `Vehicle` e `SensorMonitor` abstratas; interfaces `IncidentDetector` e `AlertChannel` |
 | Polimorfismo | `IncidentManager` percorre uma lista de `IncidentDetector`; `AlertService` usa qualquer `AlertChannel` |
 | Composição | `User` tem `EmergencyContact`s; `Trip` tem `SensorReading`s e `Incident`s |
-| Observer | `SensorMonitor` avisa os `SensorListener` (`IncidentManager`, `Trip`, tela) |
+| Observer | `SensorMonitor` avisa os `SensorListener` (`IncidentManager`, `Trip`, `TripSession`) |
+| Factory | `Vehicle.of(tipo)` cria o veículo certo sem quem chama conhecer as subclasses |
+| DAO | `ContactDao` e `TripDao` são os únicos que conhecem SQL |
 | Strategy | Detectores e canais trocáveis; o `Vehicle` escolhido muda os limites |
 
 Mais detalhes e o diagrama de classes: [`docs/architecture.md`](docs/architecture.md).
@@ -74,8 +103,8 @@ Mais detalhes e o diagrama de classes: [`docs/architecture.md`](docs/architectur
 
 ## Testes
 
-`app/src/test` tem 23 testes JUnit que rodam sem emulador (botão direito na pasta → *Run 'Tests in...'*).
-O `IncidentManagerTest` toca todos os cenários do site (batida, celular caindo, freada, lombada, parado) e confere se o Guard responde certo em cada um.
+`app/src/test` tem 27 testes JUnit que rodam sem emulador (botão direito na pasta → *Run 'Tests in...'*).
+O `IncidentManagerTest` toca todos os cenários do site (batida, celular caindo, freada, lombada, parado) e confere se o Guard responde certo em cada um. O `TripSessionTest` confere a viagem inteira e prova que a viagem e o alerta usam o mesmo `Incident`.
 
 ## Para estudar antes da apresentação
 

@@ -1,18 +1,34 @@
 package com.guard.model;
 
+// "import static" traz MÉTODOS estáticos para usar sem o nome da classe:
+// escrevemos assertEquals(...) em vez de Assert.assertEquals(...).
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import com.guard.model.vehicle.Bicycle;
+import com.guard.model.vehicle.Car;
+import com.guard.model.vehicle.Motorcycle;
+import com.guard.model.vehicle.Vehicle;
+import com.guard.model.vehicle.VehicleType;
 
 import org.junit.Test;
 
 import java.util.List;
 
-/** Testes das classes de modelo. Todos devem passar desde já. */
+/**
+ * Testes das classes de modelo.
+ *
+ * Como funciona um teste JUnit:
+ * - Cada método marcado com @Test é um teste independente.
+ * - assertEquals(esperado, real) falha se os dois forem diferentes.
+ * - Para rodar no Android Studio: botão ▶ ao lado do nome da classe. Não precisa de emulador.
+ */
 public class ModelTest {
 
     @Test
     public void eachVehicleHasItsOwnLimits() {
+        // O terceiro número (0.001) é a tolerância: double pode ter erros minúsculos de arredondamento.
         assertEquals(4.0, new Car().getImpactThresholdG(), 0.001);
         assertEquals(20.0, new Motorcycle().getSpeedDropThresholdKmh(), 0.001);
         assertEquals(120.0, new Bicycle().getRotationThresholdDegPerSec(), 0.001);
@@ -20,6 +36,7 @@ public class ModelTest {
 
     @Test
     public void factoryCreatesTheRightSubclass() {
+        // instanceof pergunta: "este objeto é desta classe (ou de uma filha dela)?"
         assertTrue(Vehicle.of(VehicleType.MOTORCYCLE) instanceof Motorcycle);
         assertEquals(VehicleType.BICYCLE, Vehicle.of(VehicleType.BICYCLE).getType());
     }
@@ -27,6 +44,7 @@ public class ModelTest {
     @Test
     public void contactsComeBackInPriorityOrder() {
         User user = new User("Lucas", new Motorcycle());
+        // Adicionados FORA de ordem de propósito.
         user.addContact(new EmergencyContact("Bruno", "11 98888-0003", "Friend", 3));
         user.addContact(new EmergencyContact("Ana", "11 98888-0001", "Sister", 1));
         user.addContact(new EmergencyContact("Dad", "11 98888-0002", "Father", 2));
@@ -36,6 +54,7 @@ public class ModelTest {
         assertEquals("Bruno", list.get(2).getName());
     }
 
+    // "expected" = este teste PASSA se a exceção acontecer (estamos testando a proteção).
     @Test(expected = IllegalStateException.class)
     public void twoContactsCannotShareAPriority() {
         User user = new User("Lucas", new Car());
@@ -69,7 +88,7 @@ public class ModelTest {
         Incident incident = new Incident(0, 0, 0, VehicleType.CAR);
         incident.markAlertSent();
         incident.markConfirmedByContact();
-        incident.cancelByUser();
+        incident.cancelByUser();   // tarde demais: deve lançar exceção
     }
 
     @Test

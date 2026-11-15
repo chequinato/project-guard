@@ -1,4 +1,4 @@
-package com.guard.ui;
+package com.guard.ui.alert;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.guard.GuardApplication;
@@ -16,29 +17,32 @@ import com.guard.alert.DemoAlert;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.User;
-
-import java.util.Locale;
+import com.guard.session.TripSession;
 
 /**
- * Tela 3 · "Are you OK?" → alerta enviado → escalonamento → fim.
+ * Tela 3 · "Are you OK?" -> alerta enviado -> escalonamento -> fim (layout: activity_alert.xml).
+ *
+ * O layout tem 3 "painéis" empilhados e só um aparece por vez:
+ *   panel_count (contagem) -> panel_alert (alerta enviado) -> panel_end (final)
+ *
+ * O incidente vem da TripSession: é o MESMO objeto que a viagem guardou.
+ * Quando o status muda aqui (cancelado, confirmado...), a viagem também enxerga.
  *
  * Canal de envio: DemoAlert (não manda SMS de verdade). Para enviar SMS real,
  * troque por new SmsAlert(this) e peça a permissão SEND_SMS. Polimorfismo: nada mais muda.
  */
-public class CountdownActivity extends AppCompatActivity {
+public class AlertActivity extends AppCompatActivity {
 
-    public static final String EXTRA_TIME = "time";
-    public static final String EXTRA_LAT = "lat";
-    public static final String EXTRA_LNG = "lng";
-
-    /** Na demo o escalonamento espera 20 s em vez de 2 min (AlertService.ESCALATION_TIMEOUT_MILLIS). */
+    /**
+     * Na demo, o escalonamento espera 20 s. Na versão real seria AlertService.ESCALATION_TIMEOUT_MILLIS (2 min).
+     */
     private static final long DEMO_ESCALATION_MILLIS = 20_000;
 
     private User user;
     private Incident incident;
     private AlertService alertService;
-    private CountDownTimer countdown;
-    private CountDownTimer escalation;
+    private CountDownTimer countdown;    // relógio dos 30 s
+    private CountDownTimer escalation;   // relógio de cada contato
 
     private View panelCount, panelAlert, panelEnd;
     private CircularProgressIndicator ring;
@@ -46,16 +50,17 @@ public class CountdownActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Guard_Alert);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_countdown);
+        setContentView(R.layout.activity_alert);
 
-        user = ((GuardApplication) getApplication()).loadUser();
-        incident = new Incident(
-                getIntent().getLongExtra(EXTRA_TIME, System.currentTimeMillis()),
-                getIntent().getDoubleExtra(EXTRA_LAT, 0),
-                getIntent().getDoubleExtra(EXTRA_LNG, 0),
-                user.getSelectedVehicle().getType());
+        TripSession session = ((GuardApplication) getApplication()).getCurrentSession();
+        // Proteção: se o Android fechou o app e reabriu direto nesta tela, não há sessão. Saímos.
+        if (session == null || session.getActiveIncident() == null) {
+            finish();
+            return;
+        }
+        user = session.getUser();
+        incident = session.getActiveIncident();
         alertService = new AlertService(new DemoAlert());
 
         panelCount = findViewById(R.id.panel_count);
@@ -66,11 +71,16 @@ public class CountdownActivity extends AppCompatActivity {
         txtAlertTitle = findViewById(R.id.txt_alert_title);
         txtAlertDetail = findViewById(R.id.txt_alert_detail);
 
-        EmergencyContact first = user.hasContacts() ? user.getContactsByPriority().get(0) : null;
-        ((TextView) findViewById(R.id.txt_who)).setText(first == null
-                ? "No contacts registered."
-                : first.getName() + " will get your location when the timer ends.");
+        // Quem será avisado primeiro?
+        TextView txtWho = findViewById(R.id.txt_who);
+        if (user.hasContacts()) {
+            EmergencyContact first = user.getContactsByPriority().get(0);
+            txtWho.setText(getString(R.string.countdown_who, first.getName()));
+        } else {
+            txtWho.setText(R.string.countdown_no_contacts);
+        }
 
+        // Os dois botões "I'm OK" fazem a mesma coisa.
         findViewById(R.id.btn_ok).setOnClickListener(v -> userIsOk());
         findViewById(R.id.btn_cancel_alert).setOnClickListener(v -> userIsOk());
         findViewById(R.id.btn_confirmed).setOnClickListener(v -> contactConfirmed());
@@ -79,12 +89,16 @@ public class CountdownActivity extends AppCompatActivity {
         startCountdown();
     }
 
-    // ---------- 1. Contagem regressiva ----------
+    // ========== Etapa 1: contagem regressiva ==========
 
     private void startCountdown() {
+        // CountDownTimer(duração, intervalo): chama onTick a cada 50 ms e onFinish no fim.
+        // Classe anônima estendendo a classe abstrata CountDownTimer.
         countdown = new CountDownTimer(AlertService.COUNTDOWN_MILLIS, 50) {
             @Override
             public void onTick(long left) {
+                // (left + 999) / 1000 arredonda para CIMA: 29.4 s aparece como "30".
+                // Divisão entre inteiros (long) descarta a parte decimal.
                 txtSeconds.setText(String.valueOf((left + 999) / 1000));
                 ring.setProgress((int) (left * 1000 / AlertService.COUNTDOWN_MILLIS));
             }
@@ -94,15 +108,15 @@ public class CountdownActivity extends AppCompatActivity {
                 ring.setProgress(0);
                 sendAlert();
             }
-        }.start();
+        }.start();   // cria E já começa
     }
 
-    // ---------- 2. Alerta + escalonamento ----------
+    // ========== Etapa 2: alerta + escalonamento ==========
 
     private void sendAlert() {
         if (!user.hasContacts()) {
-            showEnd(false, "No contacts", "Nobody to alert",
-                    "Add emergency contacts before your next trip.");
+            showEnd(false, getString(R.string.no_reply), getString(R.string.no_contacts_title),
+                    getString(R.string.no_contacts_text));
             return;
         }
         alertService.start(user, incident);
@@ -112,62 +126,75 @@ public class CountdownActivity extends AppCompatActivity {
         showCurrentContact();
     }
 
+    /** Mostra quem foi avisado e começa o relógio de espera por resposta. */
     private void showCurrentContact() {
-        EmergencyContact current = alertService.getCurrentContact();
-        EmergencyContact next = alertService.getNextContact();
-        txtAlertTitle.setText(current.getName() + " has your location");
+        // "final" numa variável local: ela não muda mais. A classe anônima abaixo só pode
+        // usar variáveis locais que sejam final (ou que nunca mudem, "efetivamente final").
+        final EmergencyContact current = alertService.getCurrentContact();
+        final EmergencyContact next = alertService.getNextContact();
+        txtAlertTitle.setText(getString(R.string.alert_title, current.getName()));
 
         if (escalation != null) escalation.cancel();
         escalation = new CountDownTimer(DEMO_ESCALATION_MILLIS, 1000) {
             @Override
             public void onTick(long left) {
+                String sentTo = getString(R.string.alert_sent_to, alertService.getChannelName(), current.getPhone());
                 String nextText = next == null
-                        ? "Last contact on your list."
-                        : String.format(Locale.US, "No reply in %ds? %s is next.", (left + 999) / 1000, next.getName());
-                txtAlertDetail.setText("Sent by " + alertService.getChannelName() + " to "
-                        + current.getPhone() + ".\n" + nextText);
+                        ? getString(R.string.alert_last)
+                        : getString(R.string.alert_next, (int) ((left + 999) / 1000), next.getName());
+                txtAlertDetail.setText(sentTo + "\n" + nextText);   // "\n" = quebra de linha
             }
 
             @Override
             public void onFinish() {
+                // Ninguém respondeu: passa para o próximo. Se acabou a lista, mostra o final.
                 if (alertService.escalate()) {
                     showCurrentContact();
                 } else {
-                    showEnd(false, "No reply", "Nobody answered",
-                            "Guard is a concept project. In a real emergency in Brazil, call 192 (SAMU).");
+                    showEnd(false, getString(R.string.no_reply), getString(R.string.nobody_answered),
+                            getString(R.string.concept_disclaimer));
                 }
             }
         }.start();
     }
 
+    /** Simula a resposta do contato ("estou indo"). */
     private void contactConfirmed() {
         cancelTimers();
         EmergencyContact who = alertService.getCurrentContact();
         alertService.confirm();
-        showEnd(true, getString(R.string.help_coming), who.getName() + " is on the way",
-                "Your location keeps updating for " + who.getName() + ".");
+        showEnd(true, getString(R.string.help_coming), getString(R.string.contact_on_way, who.getName()),
+                getString(R.string.location_updating, who.getName()));
     }
 
-    // ---------- 3. Fim ----------
+    // ========== Etapa 3: fim ==========
 
+    /** A pessoa está bem: cancela tudo. */
     private void userIsOk() {
         cancelTimers();
         incident.cancelByUser();
-        showEnd(false, "Alert cancelled", getString(R.string.glad_ok), getString(R.string.no_message_sent));
+        showEnd(false, getString(R.string.alert_cancelled), getString(R.string.glad_ok),
+                getString(R.string.no_message_sent));
     }
 
+    /**
+     * Mostra o painel final.
+     *
+     * @param helpComing true = fundo verde (alguém está indo); false = fundo claro
+     */
     private void showEnd(boolean helpComing, String header, String title, String text) {
         panelCount.setVisibility(View.GONE);
         panelAlert.setVisibility(View.GONE);
         panelEnd.setVisibility(View.VISIBLE);
 
+        // Cores vêm do colors.xml. ContextCompat.getColor transforma o id na cor de verdade.
         int bg = ContextCompat.getColor(this, helpComing ? R.color.guard_ok_dark : R.color.guard_page);
         int fg = ContextCompat.getColor(this, helpComing ? R.color.white : R.color.guard_ink);
         findViewById(R.id.root).setBackgroundColor(bg);
         getWindow().getDecorView().setBackgroundColor(bg);
-        getWindow().setStatusBarColor(bg);
-        // Tela clara (cancelado) precisa de ícones escuros na barra de status.
-        new androidx.core.view.WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView())
+        getWindow().setStatusBarColor(bg);   // barra do relógio/bateria com a mesma cor
+        // Fundo claro precisa de ícones escuros na barra de status, e vice-versa.
+        new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView())
                 .setAppearanceLightStatusBars(!helpComing);
 
         TextView h = findViewById(R.id.txt_end_header);
@@ -186,6 +213,7 @@ public class CountdownActivity extends AppCompatActivity {
         if (escalation != null) escalation.cancel();
     }
 
+    /** A tela foi fechada: para os relógios, senão eles continuariam rodando "no escuro". */
     @Override
     protected void onDestroy() {
         cancelTimers();

@@ -7,13 +7,14 @@ import static org.junit.Assert.assertTrue;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.IncidentStatus;
-import com.guard.model.Motorcycle;
 import com.guard.model.User;
-import com.guard.model.VehicleType;
+import com.guard.model.vehicle.Motorcycle;
+import com.guard.model.vehicle.VehicleType;
 
 import org.junit.Before;
 import org.junit.Test;
 
+/** Testes do envio de alerta e do escalonamento, usando o DemoAlert (não envia SMS). */
 public class AlertServiceTest {
 
     private User user;
@@ -21,6 +22,7 @@ public class AlertServiceTest {
     private DemoAlert channel;
     private AlertService service;
 
+    /** @Before roda ANTES DE CADA teste: todo teste começa com objetos novos e limpos. */
     @Before
     public void setUp() {
         user = new User("Lucas", new Motorcycle());

@@ -3,10 +3,14 @@ package com.guard.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.guard.model.VehicleType;
+import com.guard.model.vehicle.VehicleType;
 
 /**
- * Preferências simples (chave/valor) que não precisam de tabela: nome do usuário e último veículo.
+ * Preferências simples (chave -> valor) que não precisam de tabela:
+ * o nome do usuário e o último veículo escolhido.
+ *
+ * SharedPreferences é um "dicionário" que o Android salva num arquivo pequeno.
+ * Ótimo para poucos valores; para listas (contatos, viagens) usamos o SQLite.
  */
 public class SettingsStore {
 
@@ -17,14 +21,18 @@ public class SettingsStore {
     private final SharedPreferences prefs;
 
     public SettingsStore(Context context) {
+        // MODE_PRIVATE = só o nosso app consegue ler este arquivo.
         this.prefs = context.getSharedPreferences(FILE, Context.MODE_PRIVATE);
     }
 
+    /** Nome do usuário. O segundo parâmetro é o valor padrão, se ainda não houver nada salvo. */
     public String getUserName() {
         return prefs.getString(KEY_USER_NAME, "Lucas");
     }
 
     public void setUserName(String name) {
+        // edit() abre a edição, putString() muda, apply() salva (em segundo plano).
+        // Isso é "encadeamento de métodos": cada chamada devolve um objeto para a próxima.
         prefs.edit().putString(KEY_USER_NAME, name).apply();
     }
 

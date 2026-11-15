@@ -1,8 +1,13 @@
 package com.guard.data;
 
-import com.guard.model.VehicleType;
+import com.guard.model.vehicle.VehicleType;
 
-/** Uma linha da tabela trips, já pronta para a tela de histórico (só leitura). */
+/**
+ * Uma linha da tabela "trips", pronta para a tela de histórico.
+ *
+ * Por que não usar a classe Trip? A Trip é uma viagem EM ANDAMENTO (recebe leituras, tem regras).
+ * No histórico só precisamos de um resumo para LER. Então este é um objeto simples e imutável.
+ */
 public final class TripRecord {
 
     private final long id;

@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    MANIFESTO: a "carteira de identidade" do app para o Android.
+    Diz quais permissões o app pede, qual é a classe Application e quais telas (Activities) existem.
+    Toda Activity PRECISA estar listada aqui, senão o app fecha ao tentar abri-la.
+    Os nomes começando com "." são relativos ao namespace com.guard (definido no app/build.gradle.kts).
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Sensores de localização (GPS) para velocidade e para o link do mapa -->
+    <!-- Permissões: o usuário precisa autorizar as "perigosas" (localização, SMS) na hora de usar -->
+    <!-- GPS: velocidade e link do mapa -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Envio de SMS para os contatos de emergência -->
+    <!-- Enviar SMS para os contatos de emergência (canal SmsAlert) -->
     <uses-permission android:name="android.permission.SEND_SMS" />
     <!-- Vibrar durante a contagem regressiva -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- required="false": o app instala mesmo em aparelhos sem chip ou sem esses sensores -->
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" />
@@ -22,8 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guard">
 
+        <!-- Tela 1: a de abertura. O intent-filter MAIN + LAUNCHER coloca o ícone no celular. -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.home.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,19 +40,24 @@
             </intent-filter>
         </activity>
 
+        <!-- Tela 2: modo viagem (tema escuro, sempre em pé) -->
         <activity
-            android:name=".ui.TripActivity"
+            android:name=".ui.trip.TripActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Guard.Dark" />
+
+        <!-- Tela 3: "Are you OK?" (tema laranja; aparece e acende a tela mesmo com o celular bloqueado) -->
         <activity
-            android:name=".ui.CountdownActivity"
+            android:name=".ui.alert.AlertActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.Guard.Alert" />
-        <activity android:name=".ui.ContactsActivity" android:exported="false" />
-        <activity android:name=".ui.HistoryActivity" android:exported="false" />
+
+        <!-- Telas 4 e 5. exported="false" = outros apps não podem abrir estas telas -->
+        <activity android:name=".ui.contacts.ContactsActivity" android:exported="false" />
+        <activity android:name=".ui.history.HistoryActivity" android:exported="false" />
     </application>
 </manifest>

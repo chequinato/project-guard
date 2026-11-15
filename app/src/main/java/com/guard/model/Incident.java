@@ -1,15 +1,22 @@
 package com.guard.model;
 
+import com.guard.model.vehicle.VehicleType;
+
 import java.util.Locale;
 
 /**
  * Um possível acidente detectado.
  *
- * Ciclo de vida (o status só anda pra frente):
+ * CONCEITO: máquina de estados
+ * O status só pode andar por caminhos permitidos. Cada método confere se o passo é válido:
+ *
  *   COUNTDOWN  -> CANCELLED_BY_USER     (apertou "I'm OK" a tempo)
  *   COUNTDOWN  -> ALERT_SENT -> CONFIRMED_BY_CONTACT
  *                            -> NO_RESPONSE        (acabou a lista de contatos)
  *                            -> CANCELLED_BY_USER  (o alerta saiu, mas a pessoa estava bem)
+ *
+ * Como o status é private e só muda por esses métodos, é impossível, por exemplo,
+ * "confirmar" um incidente que nem teve alerta enviado.
  */
 public class Incident {
 
@@ -18,6 +25,8 @@ public class Incident {
     private final double latitude;
     private final double longitude;
     private final VehicleType vehicleType;
+
+    // Valor inicial direto na declaração: todo incidente nasce em COUNTDOWN.
     private IncidentStatus status = IncidentStatus.COUNTDOWN;
 
     public Incident(long timestampMillis, double latitude, double longitude, VehicleType vehicleType) {
@@ -35,41 +44,46 @@ public class Incident {
     public VehicleType getVehicleType() { return vehicleType; }
     public IncidentStatus getStatus() { return status; }
 
-    /** Link do mapa que vai na mensagem de emergência. */
+    /** Link do Google Maps que vai na mensagem de emergência. */
     public String getMapLink() {
+        // %.6f = número com 6 casas decimais (precisão de ~10 cm no mapa).
         return String.format(Locale.US, "https://maps.google.com/?q=%.6f,%.6f", latitude, longitude);
     }
 
+    /** A pessoa disse que está bem. Vale durante a contagem ou depois do alerta enviado. */
     public void cancelByUser() {
+        // "&&" = E lógico. Só dá erro se NÃO estiver em nenhum dos dois estados permitidos.
         if (status != IncidentStatus.COUNTDOWN && status != IncidentStatus.ALERT_SENT) {
-            throw new IllegalStateException("Não dá para cancelar um incidente em " + status);
+            throw new IllegalStateException("Cannot cancel an incident in " + status);
         }
         status = IncidentStatus.CANCELLED_BY_USER;
     }
 
+    /** A contagem zerou: o alerta foi enviado. */
     public void markAlertSent() {
         requireStatus(IncidentStatus.COUNTDOWN);
         status = IncidentStatus.ALERT_SENT;
     }
 
+    /** Um contato respondeu "estou indo". */
     public void markConfirmedByContact() {
         requireStatus(IncidentStatus.ALERT_SENT);
         status = IncidentStatus.CONFIRMED_BY_CONTACT;
     }
 
+    /** Ninguém da lista respondeu. */
     public void markNoResponse() {
         requireStatus(IncidentStatus.ALERT_SENT);
         status = IncidentStatus.NO_RESPONSE;
     }
 
-    /** Usado só pelo banco, ao recarregar o histórico. */
-    public void restoreStatus(IncidentStatus status) {
-        this.status = status;
-    }
-
+    /**
+     * Método auxiliar "private": só esta classe usa.
+     * Evita repetir o mesmo if em todos os métodos acima.
+     */
     private void requireStatus(IncidentStatus expected) {
         if (status != expected) {
-            throw new IllegalStateException("Incidente está em " + status + ", esperava " + expected);
+            throw new IllegalStateException("Incident is " + status + ", expected " + expected);
         }
     }
 }

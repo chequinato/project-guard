@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Canal de DEMONSTRAÇÃO: não envia nada de verdade, só guarda o que "teria enviado".
- * Usado nos testes e na apresentação (para ninguém receber SMS de mentira no meio da aula).
+ * Canal de DEMONSTRAÇÃO: não envia nada de verdade, só anota o que "teria enviado".
+ * Usado nos testes e na apresentação, para ninguém receber SMS falso no meio da aula.
  */
 public class DemoAlert implements AlertChannel {
 
@@ -22,9 +22,10 @@ public class DemoAlert implements AlertChannel {
     @Override
     public boolean send(EmergencyContact contact, String message) {
         sent.add(contact.getName() + " <- " + message);
-        return true;
+        return true;   // na demo, o envio "sempre funciona"
     }
 
+    /** Tudo o que foi "enviado" até agora (só leitura). Os testes conferem isto. */
     public List<String> getSentMessages() {
         return Collections.unmodifiableList(sent);
     }

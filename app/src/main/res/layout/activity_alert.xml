@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tela 3 · Countdown + Alert sent + Cancelled (as três telas laranjas/claras do site) -->
+<!-- Tela 3 · Are you OK? / alerta. Código: ui/alert/AlertActivity.java
+     FrameLayout empilha os filhos um sobre o outro. Temos 3 painéis e só um fica visível por vez:
+     panel_count (contagem) -> panel_alert (alerta enviado) -> panel_end (final). -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Uma linha de contato: prioridade · avatar · nome/relação -->
+<!-- Uma linha de contato: prioridade · avatar · nome/relação.
+     Preenchida em ui/common/ContactViews.java e usada na tela inicial e na de contatos. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

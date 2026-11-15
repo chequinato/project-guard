@@ -15,7 +15,7 @@ Nome da branch: o que você vai fazer, curto e sem espaço.
 
 ## 3. Trabalhe e faça commits pequenos
 ```bash
-git add app/src/main/java/com/guard/ui/TripActivity.java
+git add app/src/main/java/com/guard/ui/trip/TripActivity.java
 git commit -m "Usa AndroidSensorSource quando há permissão de localização"
 ```
 Antes de subir: rode os testes no Android Studio (botão direito em `app/src/test` → *Run 'Tests in ...'*).

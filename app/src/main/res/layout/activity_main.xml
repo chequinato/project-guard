@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tela 1 · New trip (igual à primeira tela do simulador do site) -->
+<!--
+    Tela 1 · New trip. Código: ui/home/MainActivity.java
+
+    COMO LER UM LAYOUT (vale para todas as telas):
+    - Cada <Tag> é um componente: TextView (texto), Button, ImageView (imagem), EditText (campo)...
+    - Componentes que guardam outros dentro são "containers":
+        ScrollView   -> deixa rolar a tela quando o conteúdo não cabe
+        LinearLayout -> empilha os filhos em linha (horizontal) ou coluna (vertical)
+    - android:layout_width / layout_height:
+        match_parent = ocupa todo o espaço do pai
+        wrap_content = só o tamanho do próprio conteúdo
+        0dp + layout_weight="1" = "divide o espaço que sobrar"
+    - Unidades: dp para tamanhos e espaços; sp para texto (respeita o tamanho de fonte do usuário).
+    - android:id="@+id/nome" cria um id; no Java usamos findViewById(R.id.nome).
+    - @string/x, @color/x, @drawable/x, @style/x apontam para arquivos em res/values e res/drawable.
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -13,7 +28,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Topo: marca + atalho -->
+        <!-- Topo: logo + nome + atalho para o histórico (linha horizontal) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,7 +76,7 @@
             android:layout_marginTop="4dp"
             android:text="@string/ready_title" />
 
-        <!-- Veículo -->
+        <!-- Veículo: grupo de 3 botões em que só um fica marcado (singleSelection) -->
         <TextView
             style="@style/Guard.Label"
             android:layout_width="wrap_content"
@@ -120,6 +135,7 @@
                 android:textAllCaps="false" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
+        <!-- Limites do veículo escolhido; o texto é preenchido no Java -->
         <TextView
             android:id="@+id/txt_limits"
             android:layout_width="wrap_content"
@@ -129,7 +145,7 @@
             android:textColor="@color/guard_muted"
             android:textSize="12sp" />
 
-        <!-- Ordem de alerta -->
+        <!-- Ordem de alerta: as linhas de contato são adicionadas pelo Java dentro de list_contacts -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -171,6 +187,7 @@
             android:textColor="@color/guard_muted"
             android:visibility="gone" />
 
+        <!-- Space com weight=1 "empurra" o botão para o fim da tela -->
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
