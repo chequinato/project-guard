@@ -3,7 +3,15 @@ package com.guard.ui.alert;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
+import android.Manifest;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.VibrationEffect;
@@ -22,13 +30,17 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.guard.GuardApplication;
 import com.guard.R;
+import com.guard.alert.AlertChannel;
 import com.guard.alert.AlertService;
 import com.guard.alert.DemoAlert;
+import com.guard.alert.MessageTemplate;
+import com.guard.alert.SmsAlert;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.User;
 import com.guard.session.TripSession;
 import com.guard.ui.common.Press;
+import com.guard.ui.common.VehicleUi;
 
 import java.util.List;
 
@@ -41,25 +53,41 @@ import java.util.List;
  * O incidente vem da TripSession: é o MESMO objeto que a viagem guardou.
  * Quando o status muda aqui (cancelado, confirmado...), a viagem também enxerga.
  *
- * Canal de envio: DemoAlert (não manda SMS de verdade). Para enviar SMS real,
- * troque por new SmsAlert(this) e peça a permissão SEND_SMS. Polimorfismo: nada mais muda.
+ * Canal de envio (POLIMORFISMO): se o usuário deu a permissão de SMS, usamos SmsAlert (SMS de verdade);
+ * senão, DemoAlert (não envia nada). O AlertService não sabe qual dos dois recebeu.
  */
 public class AlertActivity extends AppCompatActivity {
 
-    /** Na demo o escalonamento espera 20 s (na versão real: AlertService.ESCALATION_TIMEOUT_MILLIS, 2 min). */
-    private static final long DEMO_ESCALATION_MILLIS = 20_000;
+    /** Na demo o escalonamento espera 10 s (na versão real: AlertService.ESCALATION_TIMEOUT_MILLIS, 1 min). */
+    private static final long DEMO_ESCALATION_MILLIS = 10_000;
 
     private User user;
     private Incident incident;
     private AlertService alertService;
-    private CountDownTimer countdown;    // relógio dos 30 s
+    private CountDownTimer countdown;    // relógio dos 15 s
     private CountDownTimer escalation;   // relógio de cada contato
     private ObjectAnimator haloAnim;     // o halo que pulsa atrás do anel
     private Vibrator vibrator;
 
     private View panelCount, panelAlert, panelEnd;
     private CircularProgressIndicator ring;
-    private TextView txtSeconds, txtAlertTitle, txtAlertDetail;
+    private TextView txtSeconds, txtAlertTitle, txtAlertDetail, txtSmsStatus;
+    private boolean realSms;             // true = SmsAlert (SMS de verdade); false = DemoAlert
+
+    /**
+     * Escuta o aviso do Android "o SMS saiu ou falhou" (ver SmsAlert.ACTION_SENT).
+     * getResultCode() == RESULT_OK quer dizer que a operadora aceitou a mensagem.
+     */
+    private final BroadcastReceiver smsResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String who = intent.getStringExtra(SmsAlert.EXTRA_CONTACT);
+            boolean ok = getResultCode() == Activity.RESULT_OK;
+            setStatus(getString(ok ? R.string.sms_sent : R.string.sms_failed, who),
+                    ok ? R.drawable.ic_check : R.drawable.ic_alert, ok ? R.color.guard_ok_dark : R.color.guard_alert_dark);
+            if (ok) Press.tick(txtSmsStatus);
+        }
+    };
     private LinearLayout listQueue;
 
     @Override
@@ -75,7 +103,19 @@ public class AlertActivity extends AppCompatActivity {
         }
         user = session.getUser();
         incident = session.getActiveIncident();
-        alertService = new AlertService(new DemoAlert());
+        // Tem permissão de SMS? (pedida na tela inicial, ao tocar em "Start trip")
+        realSms = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                == PackageManager.PERMISSION_GRANTED;
+        AlertChannel channel = realSms ? new SmsAlert(this) : new DemoAlert();
+        // O texto do SMS vem do strings.xml, então sai no idioma do app. A lambda É o MessageTemplate.
+        MessageTemplate template = (u, i) -> getString(R.string.sms_message, u.getName(),
+                getString(VehicleUi.label(u.getSelectedVehicle().getType())).toLowerCase(), i.getMapLink());
+        alertService = new AlertService(channel, template);
+        if (realSms) {
+            // RECEIVER_NOT_EXPORTED: só o nosso próprio app pode mandar esse aviso para cá.
+            ContextCompat.registerReceiver(this, smsResult, new IntentFilter(SmsAlert.ACTION_SENT),
+                    ContextCompat.RECEIVER_NOT_EXPORTED);
+        }
         vibrator = getSystemService(Vibrator.class);
 
         panelCount = findViewById(R.id.panel_count);
@@ -86,6 +126,8 @@ public class AlertActivity extends AppCompatActivity {
         txtAlertTitle = findViewById(R.id.txt_alert_title);
         txtAlertDetail = findViewById(R.id.txt_alert_detail);
         listQueue = findViewById(R.id.list_queue);
+        txtSmsStatus = findViewById(R.id.txt_sms_status);
+        ((TextView) findViewById(R.id.txt_channel)).setText(realSms ? R.string.channel_sms : R.string.channel_demo);
 
         TextView txtWho = findViewById(R.id.txt_who);
         if (user.hasContacts()) {
@@ -161,7 +203,7 @@ public class AlertActivity extends AppCompatActivity {
         }
         alertService.start(user, incident);
         vibrate(new long[]{0, 120, 80, 120});
-        ((TextView) findViewById(R.id.txt_message)).setText(AlertService.buildMessage(user, incident));
+        ((TextView) findViewById(R.id.txt_message)).setText(alertService.getMessage());
         switchPanel(panelCount, panelAlert);
         showCurrentContact();
     }
@@ -173,6 +215,7 @@ public class AlertActivity extends AppCompatActivity {
         final EmergencyContact next = alertService.getNextContact();
         txtAlertTitle.setText(getString(R.string.alert_title, current.getName()));
         renderQueue(current);
+        showSendStatus(current);
 
         if (escalation != null) escalation.cancel();
         escalation = new CountDownTimer(DEMO_ESCALATION_MILLIS, 1000) {
@@ -195,6 +238,33 @@ public class AlertActivity extends AppCompatActivity {
                 }
             }
         }.start();
+    }
+
+    /** Linha de status do envio, embaixo da prévia da mensagem. */
+    private void showSendStatus(EmergencyContact current) {
+        if (!realSms) {
+            setStatus(getString(R.string.sms_demo_status), R.drawable.ic_shield, R.color.guard_muted);
+        } else if (alertService.wasLastSendOk()) {
+            // "Enviando..." até o Android confirmar (o smsResult troca o texto depois).
+            setStatus(getString(R.string.sms_sending, current.getName(), current.getPhone()),
+                    R.drawable.ic_send, R.color.guard_muted);
+        } else {
+            setStatus(getString(R.string.sms_failed, current.getName()), R.drawable.ic_alert, R.color.guard_alert_dark);
+        }
+    }
+
+    /** Texto do status com um ícone pequeno (16 dp) na frente, pintado na cor pedida. */
+    private void setStatus(String text, int iconRes, int colorRes) {
+        int size = Math.round(16 * getResources().getDisplayMetrics().density);
+        // mutate(): pinta só ESTA cópia do ícone (sem mudar o mesmo ícone nas outras telas).
+        Drawable icon = ContextCompat.getDrawable(this, iconRes).mutate();
+        icon.setBounds(0, 0, size, size);
+        icon.setTint(ContextCompat.getColor(this, colorRes));
+        txtSmsStatus.setCompoundDrawablesRelative(icon, null, null, null);   // ícone à esquerda
+        txtSmsStatus.setText(text);
+        // Entrada suave a cada mudança, para o olho perceber que o status mudou.
+        txtSmsStatus.setAlpha(0f);
+        txtSmsStatus.animate().alpha(1f).setDuration(220).start();
     }
 
     /** Desenha a fila: quem já foi avisado ("Alerted"), o próximo ("Next") e os outros ("Waiting"). */
@@ -322,6 +392,7 @@ public class AlertActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         cancelTimers();
+        if (realSms) unregisterReceiver(smsResult);   // parar de escutar quando a tela fecha
         super.onDestroy();
     }
 }

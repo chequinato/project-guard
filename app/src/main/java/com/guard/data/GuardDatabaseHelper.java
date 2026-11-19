@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.guard.BuildConfig;
+
 /**
  * Cria e abre o banco SQLite do Guard (o arquivo "guard.db", dentro do celular/emulador).
  * Não precisa instalar nada: o SQLite já vem no Android.
@@ -25,7 +27,7 @@ public class GuardDatabaseHelper extends SQLiteOpenHelper {
      * Versão do ESQUEMA (estrutura das tabelas). Toda vez que mudar uma tabela, some 1:
      * o Android percebe a diferença e chama onUpgrade() em quem já tinha o app instalado.
      */
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_CONTACTS = "emergency_contacts";
     public static final String TABLE_TRIPS = "trips";
@@ -76,16 +78,25 @@ public class GuardDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Contatos de demonstração (os mesmos do site), para a apresentação já abrir pronta.
-     * Os números são fictícios. Para começar com a lista vazia, apague a chamada no onCreate().
+     * Contatos de demonstração, para a apresentação já abrir pronta.
+     * Ordem do escalonamento: 1º alguém do grupo, 2º o professor (os dois recebem SMS de verdade).
+     * O 3º serve para mostrar o botão de excluir na apresentação (número inválido: não recebe nada).
+     *
+     * Os nomes e telefones vêm da classe BuildConfig, que o Gradle gera a partir do
+     * local.properties (arquivo que NÃO vai para o GitHub, porque o repositório é público).
+     * Sem o local.properties, os números são inválidos de propósito (DDD 00).
+     * Para começar com a lista vazia, apague a chamada no onCreate().
      */
     private static void seedDemoContacts(SQLiteDatabase db) {
         // Os "?" são PARÂMETROS: o banco encaixa os valores com segurança.
         // Nunca monte SQL juntando texto digitado pelo usuário (risco de "SQL injection").
         String sql = "INSERT INTO " + TABLE_CONTACTS + " (name, phone, relationship, priority) VALUES (?, ?, ?, ?)";
         // new Object[]{...} = um array criado na hora, com um valor para cada "?".
-        db.execSQL(sql, new Object[]{"Ana", "+5511900000001", "Sister", 1});
-        db.execSQL(sql, new Object[]{"Dad", "+5511900000002", "Father", 2});
-        db.execSQL(sql, new Object[]{"Bruno", "+5511900000003", "Friend", 3});
+        db.execSQL(sql, new Object[]{BuildConfig.CONTACT1_NAME, BuildConfig.CONTACT1_PHONE,
+                BuildConfig.CONTACT1_RELATIONSHIP, 1});
+        db.execSQL(sql, new Object[]{BuildConfig.CONTACT2_NAME, BuildConfig.CONTACT2_PHONE,
+                BuildConfig.CONTACT2_RELATIONSHIP, 2});
+        db.execSQL(sql, new Object[]{BuildConfig.CONTACT3_NAME, BuildConfig.CONTACT3_PHONE,
+                BuildConfig.CONTACT3_RELATIONSHIP, 3});
     }
 }

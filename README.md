@@ -2,7 +2,7 @@
 
 > *Help arrives even when you can't ask for it.*
 
-Guard is an Android app (Java, Object-Oriented Programming) that turns the sensors already in a smartphone into crash detection. If it detects a possible accident and the user does not answer within 30 seconds, it sends the user's location to their emergency contacts, one by one.
+Guard is an Android app (Java, Object-Oriented Programming) that turns the sensors already in a smartphone into crash detection. If it detects a possible accident and the user does not answer within 15 seconds, it sends the user's location to their emergency contacts, one by one.
 
 Concept project for **OOP & Professional English**, UniAnchieta, 2026.
 Website: [`docs/index.html`](docs/index.html) (can be published with GitHub Pages, see below).
@@ -27,13 +27,28 @@ Website: [`docs/index.html`](docs/index.html) (can be published with GitHub Page
 Não precisa instalar banco de dados: o SQLite já vem no Android e o arquivo `guard.db` é criado sozinho na primeira execução.
 
 ### Roteiro da demo
-1. O app já abre com 3 contatos de demonstração (Ana, Dad, Bruno). Em **Edit** dá para adicionar ou remover.
-2. Escolha o veículo e toque em **Start trip**.
-3. Na tela escura, toque num cenário: `Real crash`, `Phone dropped`, `Hard brake`, `Speed bump`...
-4. No `Real crash` aparece **Are you OK?** com 30 s. Deixe zerar para ver o alerta e o escalonamento, ou toque **I'm OK**.
-5. Depois toque em **End trip** e abra **History** para ver a viagem salva.
+1. O app já abre com 3 contatos: **1º alguém do grupo**, **2º o professor** e um 3º só para mostrar o botão de excluir (número inválido, não recebe nada). Em **Edit** dá para adicionar ou remover.
+2. A bandeira no canto superior da tela inicial troca o app entre **inglês** e **português** (abre sempre em inglês; a escolha fica salva).
+3. Escolha o veículo e toque em **Start trip**. Na primeira vez o Android pergunta se o Guard pode enviar SMS.
+4. Na tela escura, toque num cenário: `Real crash`, `Phone dropped`, `Hard brake`, `Speed bump`...
+5. No `Real crash` aparece **Are you OK?** com **15 s**. Deixe zerar para ver o alerta e o escalonamento (10 s por contato), ou toque **I'm OK**.
+6. Depois toque em **End trip** e abra **History** para ver a viagem salva.
 
-Durante a contagem, o alerta usa o canal `DemoAlert` (não envia SMS de verdade). Na demo o escalonamento espera 20 s em vez de 2 min.
+### SMS de verdade
+- Com a permissão de SMS, o alerta sai pelo chip do celular (`SmsAlert`). Sem a permissão, roda em modo demonstração (`DemoAlert`, não envia nada). A tela mostra qual dos dois está ativo e se o SMS saiu.
+- **Precisa de um celular físico com chip.** O emulador não envia SMS de verdade.
+- Os telefones reais **não ficam no GitHub** (o repositório é público). Eles vão no arquivo `local.properties`, na raiz do projeto (o Android Studio já cria esse arquivo, e ele está no `.gitignore`). Acrescente no final:
+
+```properties
+guard.contact1.name=Nome de quem do grupo
+guard.contact1.relationship=Team member
+guard.contact1.phone=+55119XXXXXXXX
+guard.contact2.name=Professor
+guard.contact2.relationship=Professor
+guard.contact2.phone=+55119XXXXXXXX
+```
+
+  Depois: **Build → Rebuild Project** e rode de novo. Os contatos são criados na primeira abertura; se o app já estava instalado com os contatos antigos, a versão nova do banco recria a lista sozinha. Sem essas linhas, o app usa números inválidos (DDD 00), então ninguém de fora recebe mensagem.
 
 ---
 
@@ -51,7 +66,8 @@ project-guard/
 │  │                          MockSensorSource (simulado) + Scenario, AndroidSensorSource (real)
 │  ├─ detection/              POLIMORFISMO + STRATEGY: IncidentDetector e os 4 detectores,
 │  │                          IncidentManager (a regra combinada)
-│  ├─ alert/                  AlertChannel (DemoAlert, SmsAlert, MessagingAppAlert) e AlertService
+│  ├─ alert/                  AlertChannel (DemoAlert, SmsAlert, MessagingAppAlert), MessageTemplate
+│  │                          (texto do SMS, traduzível) e AlertService
 │  ├─ session/                TripSession: liga sensor + detecção + viagem durante uma viagem
 │  ├─ data/                   SQLite (DAO): GuardDatabaseHelper, ContactDao, TripDao, TripRecord,
 │  │                          SettingsStore
@@ -62,7 +78,8 @@ project-guard/
 │     ├─ alert/               Tela 3 · Are you OK?       (AlertActivity)
 │     ├─ contacts/            Tela 4 · Contatos          (ContactsActivity)
 │     ├─ history/             Tela 5 · Histórico         (HistoryActivity)
-│     └─ common/              Peças usadas por mais de uma tela (ContactViews)
+│     └─ common/              Peças usadas por mais de uma tela (ContactViews, Press, VehicleUi,
+│                             ScenarioUi, Language = troca de idioma)
 ├─ app/src/main/res/
 │  ├─ layout/                 O visual de cada tela (XML)
 │  └─ values/                 Textos (strings.xml), cores (colors.xml) e temas (themes.xml)
@@ -70,7 +87,7 @@ project-guard/
 └─ docs/                      Site, proposta, arquitetura e banco
 ```
 
-**Regra de ouro da organização:** `model`, `sensor`, `detection`, `alert` e `session` são **Java puro** (sem `import android`). Por isso os 27 testes rodam no computador, sem emulador. Só `data/`, `ui/`, `AndroidSensorSource`, `SmsAlert` e `MessagingAppAlert` dependem do Android.
+**Regra de ouro da organização:** `model`, `sensor`, `detection`, `alert` e `session` são **Java puro** (sem `import android`). Por isso os 30 testes rodam no computador, sem emulador. Só `data/`, `ui/`, `AndroidSensorSource`, `SmsAlert` e `MessagingAppAlert` dependem do Android.
 
 **O código é comentado para estudo:** cada classe explica o conceito de POO que usa, e as linhas com algum recurso novo de Java (lambda, generics, `final`, try-with-resources...) têm um comentário explicando.
 

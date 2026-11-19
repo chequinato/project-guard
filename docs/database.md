@@ -25,7 +25,7 @@ Para ver o banco enquanto o app roda: Android Studio → **App Inspection** → 
 | max_speed_kmh | REAL | velocidade máxima |
 | alert_count | INTEGER | quantos possíveis acidentes foram detectados |
 
-Na primeira execução o banco já vem com 3 contatos de demonstração (Ana, Dad, Bruno, números fictícios), em `GuardDatabaseHelper.seedDemoContacts`.
+Na primeira execução o banco já vem com 3 contatos, em `GuardDatabaseHelper.seedDemoContacts`: 1º alguém do grupo, 2º o professor e um 3º só para demonstrar a exclusão. Nomes e telefones vêm do `local.properties` (via `BuildConfig`), que não vai para o GitHub; sem ele, os números são inválidos (DDD 00).
 
 Nome do usuário e veículo escolhido ficam em `SettingsStore` (SharedPreferences), porque são só dois valores e não precisam de tabela.
 

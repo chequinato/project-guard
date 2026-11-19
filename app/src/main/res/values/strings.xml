@@ -19,6 +19,7 @@
     <string name="brand_wordmark">guard</string>
     <string name="slogan">Help arrives even when you can\'t ask for it.</string>
     <string name="back">Back</string>
+    <string name="change_language">Mudar para português</string>
 
     <!-- Tela 1 · New trip (ui/home/MainActivity) -->
     <string name="history">Trip history</string>
@@ -38,6 +39,7 @@
     <string name="edit">Edit</string>
     <string name="no_contacts">No emergency contacts yet. Add at least one before your trip.</string>
     <string name="start_trip">Start trip</string>
+    <string name="sms_denied">No SMS permission: alerts will run in demo mode (no real message).</string>
 
     <!-- Tela 2 · Trip mode (ui/trip/TripActivity) -->
     <string name="monitoring">Monitoring</string>
@@ -58,6 +60,12 @@
     <string name="trip_status_back">Back on the road. Guard is watching again.</string>
     <string name="trip_ended">Trip saved. Top speed %1$.0f km/h, %2$d alert(s).</string>
     <string name="end_trip">End trip</string>
+    <string name="scenario_normal">Normal ride</string>
+    <string name="scenario_crash">Real crash</string>
+    <string name="scenario_phone_dropped">Phone dropped</string>
+    <string name="scenario_hard_brake">Hard brake</string>
+    <string name="scenario_speed_bump">Speed bump</string>
+    <string name="scenario_parked">Parked, phone handled</string>
 
     <!-- Tela 3 · Are you OK? / alerta (ui/alert/AlertActivity) -->
     <string name="possible_accident">Possible accident</string>
@@ -88,6 +96,14 @@
     <string name="no_contacts_title">Nobody to alert</string>
     <string name="no_contacts_text">Add emergency contacts before your next trip.</string>
     <string name="back_to_trip">Back to trip</string>
+    <!-- SMS de verdade. %1$s = nome do usuário, %2$s = veículo, %3$s = link do mapa -->
+    <string name="sms_message">GUARD ALERT (test, Guard student project): %1$s may have been in an accident (%2$s). Location: %3$s</string>
+    <string name="channel_sms">Guard · SMS</string>
+    <string name="channel_demo">Guard · demo</string>
+    <string name="sms_demo_status">Demo mode: no real SMS was sent.</string>
+    <string name="sms_sending">Sending SMS to %1$s (%2$s)…</string>
+    <string name="sms_sent">SMS sent to %1$s</string>
+    <string name="sms_failed">SMS to %1$s failed. Check the SIM card and signal.</string>
 
     <!-- Tela 4 · Contacts (ui/contacts/ContactsActivity) -->
     <string name="contacts_title">Who should we call?</string>
@@ -101,6 +117,10 @@
     <string name="remove_contact_text">The others move up in the alert order.</string>
     <string name="remove">Remove</string>
     <string name="cancel">Cancel</string>
+    <string name="error_name">Type the contact\'s name.</string>
+    <string name="error_phone_required">Type a phone number.</string>
+    <string name="error_phone_invalid">This phone number looks too short.</string>
+    <string name="error_remove">Couldn\'t remove this contact. Try again.</string>
 
     <!-- Tela 5 · History (ui/history/HistoryActivity) -->
     <string name="your_trips">Your trips</string>

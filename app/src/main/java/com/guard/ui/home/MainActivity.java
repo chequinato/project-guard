@@ -1,6 +1,8 @@
 package com.guard.ui.home;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,7 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.guard.GuardApplication;
 import com.guard.R;
@@ -17,6 +22,7 @@ import com.guard.model.User;
 import com.guard.model.vehicle.Vehicle;
 import com.guard.model.vehicle.VehicleType;
 import com.guard.ui.common.ContactViews;
+import com.guard.ui.common.Language;
 import com.guard.ui.common.Press;
 import com.guard.ui.common.VehicleUi;
 import com.guard.ui.contacts.ContactsActivity;
@@ -42,6 +48,19 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtNoContacts, txtLimitImpact, txtLimitDrop, txtLimitRotation;
     private User user;
 
+    /**
+     * Pedido da permissão de SMS (Android 6+ pergunta na hora, num pop-up do sistema).
+     *
+     * registerForActivityResult: registramos ANTES (no momento em que a tela é criada)
+     * o que fazer quando o usuário responder. A resposta chega na lambda: true = permitiu.
+     * Permitindo ou não, a viagem começa: sem permissão o alerta roda em modo demonstração.
+     */
+    private final ActivityResultLauncher<String> smsPermission =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (!granted) Toast.makeText(this, R.string.sms_denied, Toast.LENGTH_LONG).show();
+                openTrip();
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +81,15 @@ public class MainActivity extends AppCompatActivity {
         View btnStart = findViewById(R.id.btn_start);
         View btnHistory = findViewById(R.id.btn_history);
         View btnEdit = findViewById(R.id.btn_edit_contacts);
-        Press.attach(btnStart, btnHistory, btnEdit);   // efeito de "afundar" ao tocar
+        ImageView btnLanguage = findViewById(R.id.btn_language);
+        Press.attach(btnStart, btnHistory, btnEdit, btnLanguage);   // efeito de "afundar" ao tocar
+
+        // Bandeira: mostra o idioma para o qual o toque vai TROCAR (em inglês aparece o Brasil).
+        btnLanguage.setImageResource(Language.isPortuguese(this) ? R.drawable.ic_flag_us : R.drawable.ic_flag_br);
+        btnLanguage.setOnClickListener(v -> {
+            Press.tick(v);
+            Language.toggle(this);   // o Android recria as telas já no idioma novo
+        });
 
         // Intent = "pedido para abrir outra tela".
         btnEdit.setOnClickListener(v -> startActivity(new Intent(this, ContactsActivity.class)));
@@ -138,6 +165,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, ContactsActivity.class));
             return;
         }
+        // Já temos a permissão de SMS? Então segue. Senão, pergunta (a resposta cai no smsPermission).
+        boolean canSms = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                == PackageManager.PERMISSION_GRANTED;
+        if (canSms) {
+            openTrip();
+        } else {
+            smsPermission.launch(Manifest.permission.SEND_SMS);
+        }
+    }
+
+    private void openTrip() {
         startActivity(new Intent(this, TripActivity.class));
     }
 }

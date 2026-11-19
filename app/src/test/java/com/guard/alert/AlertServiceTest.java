@@ -64,4 +64,32 @@ public class AlertServiceTest {
         assertFalse(service.escalate());  // acabou a lista
         assertEquals(IncidentStatus.NO_RESPONSE, incident.getStatus());
     }
+
+    @Test
+    public void customTemplateIsWhatGetsSent() {
+        // Lambda no lugar do MessageTemplate: é assim que a tela manda o texto traduzido.
+        AlertService pt = new AlertService(channel, (u, i) -> "ALERTA: " + u.getName());
+        pt.start(user, incident);
+        assertEquals("Ana <- ALERTA: Lucas", channel.getSentMessages().get(0));
+        assertEquals("ALERTA: Lucas", pt.getMessage());
+    }
+
+    @Test
+    public void reportsWhenTheChannelFails() {
+        // Classe anônima: um canal que sempre falha (como um celular sem chip).
+        AlertChannel broken = new AlertChannel() {
+            @Override public String getName() { return "Broken"; }
+            @Override public boolean send(EmergencyContact contact, String message) { return false; }
+        };
+        AlertService failing = new AlertService(broken);
+        failing.start(user, incident);
+        assertFalse(failing.wasLastSendOk());
+        service.start(user, new Incident(0, -23.1857, -46.8978, VehicleType.MOTORCYCLE));
+        assertTrue(service.wasLastSendOk());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void templateIsRequired() {
+        new AlertService(channel, null);
+    }
 }

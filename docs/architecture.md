@@ -12,7 +12,7 @@ MockSensorSource / AndroidSensorSource      (SensorMonitor, padrão Observer)
         │        ▼
         │    TripSession.onIncidentDetected()  guarda o incidente ativo e o adiciona na Trip
         │        ▼
-        │    TripActivity.onIncident() ──► AlertActivity (30 s, "I'm OK")
+        │    TripActivity.onIncident() ──► AlertActivity (15 s, "I'm OK")
         │                                       │ pega o MESMO Incident da TripSession
         │                                       │ tempo acabou
         │                                       ▼

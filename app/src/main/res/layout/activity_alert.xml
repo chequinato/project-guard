@@ -75,7 +75,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/funnel_display"
                 android:letterSpacing="-0.04"
-                android:text="30"
+                android:text="15"
                 android:textColor="@color/white"
                 android:textSize="84sp"
                 android:textStyle="bold" />
@@ -190,6 +190,7 @@
                         android:contentDescription="@null"
                         android:src="@drawable/ic_guard_logo" />
                     <TextView
+                        android:id="@+id/txt_channel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -206,6 +207,16 @@
                     android:lineSpacingMultiplier="1.15"
                     android:textColor="@color/guard_ink"
                     android:textSize="14sp" />
+                <!-- Status do envio: "Enviando SMS...", "SMS enviado" ou "falhou" (o Java preenche) -->
+                <TextView
+                    android:id="@+id/txt_sms_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:drawablePadding="6dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/guard_muted"
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <!-- Fila do escalonamento: quem já foi avisado, quem é o próximo (o Java preenche) -->

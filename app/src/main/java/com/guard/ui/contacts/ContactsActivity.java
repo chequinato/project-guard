@@ -81,9 +81,17 @@ public class ContactsActivity extends AppCompatActivity {
             keyboard.hideSoftInputFromWindow(list.getWindowToken(), 0);
             render();
         } catch (IllegalArgumentException e) {
-            // e.getMessage() é o texto que passamos no "throw new IllegalArgumentException(...)".
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            // A mensagem da exceção vem do modelo, em inglês. Para a tela, usamos o texto
+            // traduzido do strings.xml, escolhido de acordo com o campo que está errado.
+            Toast.makeText(this, validationMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /** Qual campo está errado? Devolve o id do texto (strings.xml) para mostrar ao usuário. */
+    private int validationMessage() {
+        if (inputName.getText().toString().trim().isEmpty()) return R.string.error_name;
+        if (inputPhone.getText().toString().trim().isEmpty()) return R.string.error_phone_required;
+        return R.string.error_phone_invalid;
     }
 
     /** Caixa de diálogo "Remove Ana?" com os botões Remove / Cancel. */
@@ -93,7 +101,13 @@ public class ContactsActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.remove_contact_title, contact.getName()))
                 .setMessage(R.string.remove_contact_text)
                 .setPositiveButton(R.string.remove, (dialog, which) -> {
-                    dao.delete(contact);
+                    // Se o banco recusar algo, avisamos em vez de deixar o app fechar.
+                    try {
+                        dao.delete(contact);
+                        Press.tick(list);
+                    } catch (RuntimeException e) {
+                        Toast.makeText(this, R.string.error_remove, Toast.LENGTH_SHORT).show();
+                    }
                     render();
                 })
                 .setNegativeButton(R.string.cancel, null)   // null = só fecha

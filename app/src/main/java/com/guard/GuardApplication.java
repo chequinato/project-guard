@@ -12,6 +12,7 @@ import com.guard.model.User;
 import com.guard.model.vehicle.Vehicle;
 import com.guard.sensor.SensorMonitor;
 import com.guard.session.TripSession;
+import com.guard.ui.common.Language;
 
 /**
  * O objeto do APP inteiro: é criado quando o app abre e vive até ele fechar.
@@ -39,6 +40,7 @@ public class GuardApplication extends Application {
         contactDao = new ContactDao(database);
         tripDao = new TripDao(database);
         settings = new SettingsStore(this);
+        Language.applyDefault(this);   // 1ª abertura: app em inglês (a bandeira troca depois)
     }
 
     public ContactDao getContactDao() { return contactDao; }

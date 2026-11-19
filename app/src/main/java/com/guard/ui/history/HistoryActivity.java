@@ -31,12 +31,15 @@ public class HistoryActivity extends AppCompatActivity {
     /**
      * Formato da data, ex.: "Fri, 13 Nov, 15:34".
      * EEE = dia da semana | d = dia | MMM = mês abreviado | HH:mm = hora:minuto (24 h)
+     * Criado no onCreate, com o idioma DA TELA: em português sai "sex., 13 nov., 15:34".
      */
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM, HH:mm", Locale.US);
+    private SimpleDateFormat dateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Locale screenLocale = getResources().getConfiguration().getLocales().get(0);
+        dateFormat = new SimpleDateFormat("EEE, d MMM, HH:mm", screenLocale);
         setContentView(R.layout.activity_history);
 
         View btnBack = findViewById(R.id.btn_back);

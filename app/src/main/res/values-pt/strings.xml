@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Textos em PORTUGUÊS. Mesmos nomes do values/strings.xml (inglês), só muda o texto.
+    O Android usa esta pasta quando o idioma do app é português (botão da bandeira na tela inicial).
+    Se faltar algum nome aqui, o Android usa o texto em inglês no lugar.
+-->
+<resources>
+    <string name="app_name">Guard</string>
+    <string name="brand_wordmark">guard</string>
+    <string name="slogan">A ajuda chega mesmo quando você não consegue pedir.</string>
+    <string name="back">Voltar</string>
+    <string name="change_language">Switch to English</string>
+
+    <!-- Tela 1 · Nova viagem -->
+    <string name="history">Histórico de viagens</string>
+    <string name="ready_title">Pronto para sair?</string>
+    <string name="home_subtitle">Escolha o veículo, confira quem será avisado e vá.</string>
+    <string name="vehicle">Veículo</string>
+    <string name="car">Carro</string>
+    <string name="motorcycle">Moto</string>
+    <string name="bicycle">Bicicleta</string>
+    <string name="limit_impact_value">%1$.1f g</string>
+    <string name="limit_drop_value">%1$.0f km/h</string>
+    <string name="limit_rotation_value">%1$.0f°/s</string>
+    <string name="limit_impact_label">impacto</string>
+    <string name="limit_drop_label">queda de velocidade em 2 s</string>
+    <string name="limit_rotation_label">rotação</string>
+    <string name="alert_order">Quem será avisado</string>
+    <string name="edit">Editar</string>
+    <string name="no_contacts">Nenhum contato de emergência ainda. Cadastre pelo menos um antes da viagem.</string>
+    <string name="start_trip">Iniciar viagem</string>
+    <string name="sms_denied">Sem permissão de SMS: os alertas vão rodar em modo demonstração (sem mensagem de verdade).</string>
+
+    <!-- Tela 2 · Modo viagem -->
+    <string name="monitoring">Monitorando</string>
+    <string name="kmh">km/h</string>
+    <string name="demo_location">Rod. Anhanguera, Jundiaí</string>
+    <string name="impact">Impacto</string>
+    <string name="rotation">Rotação</string>
+    <string name="speed_drop">Queda de velocidade</string>
+    <string name="stillness">Imobilidade</string>
+    <string name="speed_value">%1$.0f</string>
+    <string name="impact_value">%1$.1f g</string>
+    <string name="rotation_value">%1$.0f°/s</string>
+    <string name="demo_title">Simule uma situação</string>
+    <string name="trip_status_idle">Andando normalmente. Escolha uma situação acima para testar o detector.</string>
+    <string name="trip_status_simulating">Simulando: %1$s. Esperado: %2$s.</string>
+    <string name="expected_countdown">a contagem começa</string>
+    <string name="expected_watching">o Guard continua vigiando</string>
+    <string name="trip_status_back">De volta à estrada. O Guard está vigiando de novo.</string>
+    <string name="trip_ended">Viagem salva. Velocidade máxima %1$.0f km/h, %2$d alerta(s).</string>
+    <string name="end_trip">Encerrar viagem</string>
+    <string name="scenario_normal">Andando normal</string>
+    <string name="scenario_crash">Acidente real</string>
+    <string name="scenario_phone_dropped">Celular caiu</string>
+    <string name="scenario_hard_brake">Freada brusca</string>
+    <string name="scenario_speed_bump">Lombada</string>
+    <string name="scenario_parked">Parado, mexendo no celular</string>
+
+    <!-- Tela 3 · Você está bem? / alerta -->
+    <string name="possible_accident">Possível acidente</string>
+    <string name="are_you_ok">Você está bem?</string>
+    <string name="countdown_who">%1$s recebe sua localização quando o tempo acabar.</string>
+    <string name="countdown_no_contacts">Nenhum contato cadastrado.</string>
+    <string name="im_ok">Estou bem</string>
+    <string name="alert_sent">Alerta enviado</string>
+    <string name="live_location">Localização ao vivo</string>
+    <string name="alert_title">%1$s tem sua localização</string>
+    <string name="notif_header">Guard · agora</string>
+    <string name="alert_next">Sem resposta em %1$d s? %2$s é o próximo.</string>
+    <string name="alert_last">Último contato da sua lista.</string>
+    <string name="queue_sent">Avisado</string>
+    <string name="queue_next">Próximo</string>
+    <string name="queue_waiting">Aguardando</string>
+    <string name="contact_confirmed">Contato respondeu: a caminho</string>
+    <string name="cancel_alert">Estou bem, cancelar alerta</string>
+    <string name="alert_cancelled">Alerta cancelado</string>
+    <string name="glad_ok">Que bom que você está bem.</string>
+    <string name="no_message_sent">Nenhuma mensagem foi enviada. O evento ficou salvo no histórico da viagem.</string>
+    <string name="help_coming">A ajuda está a caminho</string>
+    <string name="contact_on_way">%1$s está a caminho</string>
+    <string name="location_updating">Sua localização continua sendo atualizada para %1$s.</string>
+    <string name="no_reply">Sem resposta</string>
+    <string name="nobody_answered">Ninguém respondeu</string>
+    <string name="concept_disclaimer">O Guard é um projeto conceito. Em uma emergência real no Brasil, ligue 192 (SAMU).</string>
+    <string name="no_contacts_title">Ninguém para avisar</string>
+    <string name="no_contacts_text">Cadastre contatos de emergência antes da próxima viagem.</string>
+    <string name="back_to_trip">Voltar para a viagem</string>
+    <string name="sms_message">ALERTA GUARD (teste, projeto acadêmico Guard): %1$s pode ter sofrido um acidente (%2$s). Localização: %3$s</string>
+    <string name="channel_sms">Guard · SMS</string>
+    <string name="channel_demo">Guard · demonstração</string>
+    <string name="sms_demo_status">Modo demonstração: nenhum SMS de verdade foi enviado.</string>
+    <string name="sms_sending">Enviando SMS para %1$s (%2$s)…</string>
+    <string name="sms_sent">SMS enviado para %1$s</string>
+    <string name="sms_failed">O SMS para %1$s falhou. Confira o chip e o sinal.</string>
+
+    <!-- Tela 4 · Contatos -->
+    <string name="contacts_title">Quem devemos avisar?</string>
+    <string name="contacts_hint">A prioridade 1 é avisada primeiro. Toque no × para remover alguém.</string>
+    <string name="new_contact">Novo contato</string>
+    <string name="name">Nome</string>
+    <string name="phone">Telefone</string>
+    <string name="relationship">Parentesco (opcional)</string>
+    <string name="add_contact">Adicionar contato</string>
+    <string name="remove_contact_title">Remover %1$s?</string>
+    <string name="remove_contact_text">Os outros sobem na ordem de alerta.</string>
+    <string name="remove">Remover</string>
+    <string name="cancel">Cancelar</string>
+    <string name="error_name">Digite o nome do contato.</string>
+    <string name="error_phone_required">Digite um telefone.</string>
+    <string name="error_phone_invalid">Esse telefone parece curto demais.</string>
+    <string name="error_remove">Não deu para remover este contato. Tente de novo.</string>
+
+    <!-- Tela 5 · Histórico -->
+    <string name="your_trips">Suas viagens</string>
+    <string name="history_summary">%1$d viagem(ns), %2$d alerta(s)</string>
+    <string name="trip_details">%1$s, %2$s, até %3$.0f km/h</string>
+    <string name="trip_alerts">%1$d alerta(s)</string>
+    <string name="trip_safe">Segura</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="duration_seconds">%1$d s</string>
+    <string name="history_empty">Nenhuma viagem ainda. Termine uma viagem e ela aparece aqui.</string>
+</resources>

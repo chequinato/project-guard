@@ -34,6 +34,7 @@ import com.guard.sensor.Scenario;
 import com.guard.session.TripSession;
 import com.guard.ui.alert.AlertActivity;
 import com.guard.ui.common.Press;
+import com.guard.ui.common.ScenarioUi;
 import com.guard.ui.common.VehicleUi;
 
 import java.util.ArrayDeque;
@@ -153,7 +154,7 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
             boolean isCrash = scenario == Scenario.CRASH;
 
             Chip chip = new Chip(this);
-            chip.setText(scenario.getLabel());
+            chip.setText(ScenarioUi.label(scenario));
             chip.setTypeface(font);
             chip.setTextColor(ContextCompat.getColor(this, R.color.white));
             chip.setChipBackgroundColor(ColorStateList.valueOf(
@@ -175,7 +176,7 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         queue.clear();
         queue.addAll(MockSensorSource.generate(scenario, nextTimestamp));
         String expected = getString(scenario.shouldAlert() ? R.string.expected_countdown : R.string.expected_watching);
-        txtStatus.setText(getString(R.string.trip_status_simulating, scenario.getLabel().toLowerCase(), expected));
+        txtStatus.setText(getString(R.string.trip_status_simulating, getString(ScenarioUi.label(scenario)).toLowerCase(), expected));
     }
 
     // ---------- Avisos da TripSession (contrato TripSession.Listener) ----------

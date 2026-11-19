@@ -46,15 +46,17 @@ public class ContactDao {
             db.delete(GuardDatabaseHelper.TABLE_CONTACTS, "id = ?", new String[]{String.valueOf(contact.getId())});
 
             // A coluna priority é UNIQUE: se renumerarmos direto, dois contatos teriam o mesmo número
-            // por um instante e o banco recusaria. Truque: primeiro deixamos todas negativas...
-            db.execSQL("UPDATE " + GuardDatabaseHelper.TABLE_CONTACTS + " SET priority = -priority");
+            // por um instante e o banco recusaria. Truque: primeiro "empurramos" todas para longe
+            // (somando 1000), assim os números 1, 2, 3... ficam livres.
+            // OBS: antes o truque era deixar negativo (-priority), mas a tabela tem
+            // CHECK (priority >= 1) — o banco recusava e o app fechava ao excluir. Por isso o +1000.
+            db.execSQL("UPDATE " + GuardDatabaseHelper.TABLE_CONTACTS + " SET priority = priority + 1000");
 
-            // ...depois percorremos em ordem e numeramos 1, 2, 3...
-            // (ORDER BY priority DESC: -1 vem antes de -2, ou seja, a ordem original.)
+            // ...depois percorremos na ordem original (ASC = do menor para o maior) e numeramos 1, 2, 3...
             int priority = 1;
             // TRY-WITH-RESOURCES: o Cursor declarado nos parênteses é fechado sozinho no final.
             try (Cursor c = db.rawQuery("SELECT id FROM " + GuardDatabaseHelper.TABLE_CONTACTS
-                    + " ORDER BY priority DESC", null)) {
+                    + " ORDER BY priority ASC", null)) {
                 while (c.moveToNext()) {   // anda linha por linha do resultado
                     // priority++ usa o valor atual e SÓ DEPOIS soma 1.
                     db.execSQL("UPDATE " + GuardDatabaseHelper.TABLE_CONTACTS + " SET priority = ? WHERE id = ?",
