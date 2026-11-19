@@ -13,7 +13,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.guard.GuardApplication;
 import com.guard.R;
 import com.guard.alert.AlertService;
-import com.guard.alert.DemoAlert;
+import com.guard.alert.SmsAlert;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.User;
@@ -28,8 +28,8 @@ import com.guard.session.TripSession;
  * O incidente vem da TripSession: é o MESMO objeto que a viagem guardou.
  * Quando o status muda aqui (cancelado, confirmado...), a viagem também enxerga.
  *
- * Canal de envio: DemoAlert (não manda SMS de verdade). Para enviar SMS real,
- * troque por new SmsAlert(this) e peça a permissão SEND_SMS. Polimorfismo: nada mais muda.
+ * Canal de envio: SmsAlert (SMS real). A permissão SEND_SMS já está declarada no manifest;
+ * o usuário só precisa autorizar na tela do app (permissões do sistema). Polimorfismo: nada mais muda.
  */
 public class AlertActivity extends AppCompatActivity {
 
@@ -61,7 +61,7 @@ public class AlertActivity extends AppCompatActivity {
         }
         user = session.getUser();
         incident = session.getActiveIncident();
-        alertService = new AlertService(new DemoAlert());
+        alertService = new AlertService(new SmsAlert(this));
 
         panelCount = findViewById(R.id.panel_count);
         panelAlert = findViewById(R.id.panel_alert);
