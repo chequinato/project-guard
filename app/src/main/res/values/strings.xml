@@ -20,6 +20,9 @@
     <string name="slogan">Help arrives even when you can\'t ask for it.</string>
     <string name="back">← Back</string>
 
+    <!-- Tela 0 · Abertura (ui/splash/SplashActivity) -->
+    <string name="splash_footer">Crash detection for any smartphone</string>
+
     <!-- Tela 1 · New trip (ui/home/MainActivity) -->
     <string name="history">History</string>
     <string name="new_trip">New trip</string>

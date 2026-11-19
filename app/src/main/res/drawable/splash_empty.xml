@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Ícone vazio para a splash do SISTEMA (Android 12+).
+    A partir do Android 12, o próprio sistema mostra uma tela com o ícone do app antes de qualquer tela nossa.
+    Deixamos esse ícone transparente: assim o usuário vê só o fundo azul e, em seguida, a NOSSA animação.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@android:color/transparent" />
+</shape>

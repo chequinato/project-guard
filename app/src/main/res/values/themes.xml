@@ -25,6 +25,14 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <!-- Tela de abertura: fundo azul desde o primeiro instante (sem "piscar" branco) -->
+    <style name="Theme.Guard.Splash" parent="Theme.Guard">
+        <item name="android:windowBackground">@color/guard_blue</item>
+        <item name="android:statusBarColor">@color/guard_blue</item>
+        <item name="android:navigationBarColor">@color/guard_blue</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
     <!-- Estilos de texto reutilizados -->
     <style name="Guard.Title" parent="">
         <item name="android:textSize">30sp</item>

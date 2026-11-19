@@ -56,6 +56,7 @@ project-guard/
 │  ├─ data/                   SQLite (DAO): GuardDatabaseHelper, ContactDao, TripDao, TripRecord,
 │  │                          SettingsStore
 │  └─ ui/                     Uma pasta por tela
+│     ├─ splash/              Tela 0 · Abertura animada  (SplashActivity)
 │     ├─ home/                Tela 1 · New trip          (MainActivity)
 │     ├─ trip/                Tela 2 · Trip mode         (TripActivity)
 │     ├─ alert/               Tela 3 · Are you OK?       (AlertActivity)

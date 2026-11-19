@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Versão do tema da abertura só para Android 12 ou mais novo (pasta values-v31 = API 31+).
+    Nessas versões o próprio sistema mostra uma splash antes do app abrir.
+    Deixamos ela azul e sem ícone, para emendar direto na NOSSA animação.
+    (Estes atributos não existem antes do Android 12; por isso ficam numa pasta separada.)
+-->
+<resources>
+    <style name="Theme.Guard.Splash" parent="Theme.Guard">
+        <item name="android:windowBackground">@color/guard_blue</item>
+        <item name="android:statusBarColor">@color/guard_blue</item>
+        <item name="android:navigationBarColor">@color/guard_blue</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowSplashScreenBackground">@color/guard_blue</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_empty</item>
+    </style>
+</resources>

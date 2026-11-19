@@ -30,15 +30,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guard">
 
-        <!-- Tela 1: a de abertura. O intent-filter MAIN + LAUNCHER coloca o ícone no celular. -->
+        <!-- Tela 0: abertura animada. O intent-filter MAIN + LAUNCHER faz dela a primeira tela
+             e coloca o ícone do app no celular. -->
         <activity
-            android:name=".ui.home.MainActivity"
-            android:exported="true">
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Guard.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Tela 1: New trip (a abertura abre esta tela no final) -->
+        <activity
+            android:name=".ui.home.MainActivity"
+            android:exported="false" />
 
         <!-- Tela 2: modo viagem (tema escuro, sempre em pé) -->
         <activity

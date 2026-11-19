@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Logo ANIMADO da tela de abertura (AnimatedVectorDrawable).
+
+    Um "animated-vector" junta duas coisas no mesmo arquivo:
+      1) o desenho (um vector: pino branco, escudo azul e a linha de batimento laranja);
+      2) as animações, cada uma ligada a uma parte do desenho pelo "name".
+
+    A animação aqui "desenha" a linha de batimento: trimPathEnd vai de 0 (nada desenhado)
+    até 1 (linha inteira). Quem dá o play é o Java: ((Animatable) drawable).start().
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="140dp"
+            android:height="140dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+
+            <!-- Pino de localização (branco, porque o fundo da tela é azul) -->
+            <path
+                android:name="pin"
+                android:fillColor="#FFFFFF"
+                android:pathData="M12,1.5C7.3,1.5 3.5,5.3 3.5,10c0,5.9 8.5,12.5 8.5,12.5s8.5,-6.6 8.5,-12.5C20.5,5.3 16.7,1.5 12,1.5z" />
+
+            <!-- Escudo (proteção) -->
+            <path
+                android:name="shield"
+                android:fillColor="#104FB6"
+                android:pathData="M12,5l4.6,1.7v3.3c0,2.9 -1.9,5.1 -4.6,6.1c-2.7,-1 -4.6,-3.2 -4.6,-6.1V6.7z" />
+
+            <!-- Linha de batimento (vida). Começa invisível: trimPathEnd = 0 -->
+            <path
+                android:name="beat"
+                android:pathData="M8.6,10.4h1.5l0.9,-1.8l1.5,3.4l1,-1.6h1.9"
+                android:strokeColor="#FF5A1F"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"
+                android:strokeWidth="1.1"
+                android:trimPathEnd="0" />
+        </vector>
+    </aapt:attr>
+
+    <!-- Animação da linha: desenha da esquerda para a direita, depois de 0,35 s -->
+    <target android:name="beat">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="700"
+                android:interpolator="@android:interpolator/fast_out_slow_in"
+                android:propertyName="trimPathEnd"
+                android:startOffset="350"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:valueType="floatType" />
+        </aapt:attr>
+    </target>
+</animated-vector>
