@@ -75,7 +75,7 @@
 
     <!-- ===== Texto ===== -->
     <!-- Títulos grandes: Funnel Display, levemente "apertado" como no site -->
-    <style name="Guard.Display">
+    <style name="Guard.Display" parent="">
         <item name="android:fontFamily">@font/funnel_display</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">34sp</item>
@@ -89,14 +89,14 @@
     </style>
 
     <!-- Nome de cada bloco da tela ("Vehicle", "Who gets alerted") -->
-    <style name="Guard.Section">
+    <style name="Guard.Section" parent="">
         <item name="android:fontFamily">@font/funnel_sans</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/guard_ink</item>
     </style>
 
-    <style name="Guard.Body">
+    <style name="Guard.Body" parent="">
         <item name="android:fontFamily">@font/funnel_sans</item>
         <item name="android:textSize">15sp</item>
         <item name="android:lineSpacingMultiplier">1.15</item>
@@ -104,14 +104,14 @@
     </style>
 
     <!-- Leituras de sensor: DM Mono, como os números do site -->
-    <style name="Guard.Data">
+    <style name="Guard.Data" parent="">
         <item name="android:fontFamily">@font/dm_mono</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/guard_ink</item>
     </style>
 
     <!-- Um dos 4 sinais do modo viagem (ícone + nome). Fundo e cor mudam quando ativo. -->
-    <style name="Guard.Signal">
+    <style name="Guard.Signal" parent="">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">44dp</item>
         <item name="android:layout_weight">1</item>
@@ -170,7 +170,7 @@
     </style>
 
     <!-- Botão redondo só com ícone (voltar, histórico) -->
-    <style name="Guard.IconButton">
+    <style name="Guard.IconButton" parent="">
         <item name="android:layout_width">44dp</item>
         <item name="android:layout_height">44dp</item>
         <item name="android:padding">11dp</item>
