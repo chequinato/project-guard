@@ -71,4 +71,14 @@ public class Trip {
     public double getMaxSpeedKmh() { return maxSpeedKmh; }
     public List<SensorReading> getReadings() { return Collections.unmodifiableList(readings); }
     public List<Incident> getIncidents() { return Collections.unmodifiableList(incidents); }
+
+    /**
+     * Número de incidentes (alertas) da viagem até agora.
+     * É o mesmo que {@link #getIncidents()}.size(): cada incidente corresponde a uma
+     * viagem de alerta enviada, e isso é exatamente o que a tabela "trips" guarda na coluna
+     * "alert_count" (ver TripRecord).
+     */
+    public int getAlertCount() {
+        return incidents.size();
+    }
 }

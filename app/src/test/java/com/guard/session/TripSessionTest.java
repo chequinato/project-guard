@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import com.guard.alert.AlertService;
 import com.guard.alert.DemoAlert;
@@ -19,6 +20,8 @@ import com.guard.sensor.Scenario;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
 
 /**
  * Testa a viagem completa: sensor -> detecção -> incidente -> alerta -> fim da viagem.
@@ -77,5 +80,28 @@ public class TripSessionTest {
         assertFalse(source.isRunning());
         assertEquals(0, trip.getIncidents().size());
         assertEquals(53, trip.getMaxSpeedKmh(), 0.001);   // 50 + (i % 4), no máximo 53
+    }
+
+    @Test
+    public void activeSignalsReportsAllFourDetectorSignals() {
+        // Antes de nenhuma leitura: todos os sinais estão "desativados".
+        Map<String, Boolean> before = session.activeSignals(0);
+        assertEquals(4, before.size());
+        for (Boolean value : before.values()) {
+            assertFalse(value);
+        }
+
+        // O CRASH dispara todos os detectores, então pelo menos um sinal fica ativo.
+        source.play(Scenario.CRASH, 0);
+        Incident active = session.getActiveIncident();
+        assertNotNull(active);
+        // Passamos o "agora" = horário do incidente, que está dentro da janela de memória dos sinais.
+        Map<String, Boolean> after = session.activeSignals(active.getTimestampMillis());
+        assertEquals(4, after.size());
+        boolean anyActive = false;
+        for (Boolean value : after.values()) {
+            if (value) anyActive = true;
+        }
+        assertTrue("CRASH deve manter pelo menos um sinal ativo", anyActive);
     }
 }

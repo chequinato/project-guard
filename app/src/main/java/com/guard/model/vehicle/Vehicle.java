@@ -77,6 +77,9 @@ public abstract class Vehicle {
      * "static" = chamamos pela classe (Vehicle.of), sem precisar de um objeto antes.
      */
     public static Vehicle of(VehicleType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown vehicle type: null");
+        }
         switch (type) {
             case CAR:        return new Car();
             case MOTORCYCLE: return new Motorcycle();
