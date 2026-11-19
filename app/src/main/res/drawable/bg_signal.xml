@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Um dos 4 sinais. Ativo (setActivated(true) no Java) = branco cheio; inativo = só contorno. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:enterFadeDuration="180" android:exitFadeDuration="300">
+    <item android:state_activated="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <stroke android:width="1.5dp" android:color="@color/navy_line" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+</selector>

@@ -9,30 +9,32 @@
     Como usar:
     - No XML do layout:  android:text="@string/start_trip"
     - No Java:           getString(R.string.start_trip)
-    - Com "buracos":     <string name="x">%1$s has your location</string>
-                         getString(R.string.x, "Ana")  ->  "Ana has your location"
-      %1$s = 1º valor como texto | %2$d = 2º valor como inteiro | %1$.1f = número com 1 casa decimal
+    - Com "buracos":     %1$s = 1º valor como texto | %2$d = 2º valor como inteiro | %1$.1f = número com 1 casa
+                         getString(R.string.alert_title, "Ana")  ->  "Ana has your location"
 
-    Detalhe: o apóstrofo precisa de barra antes (\'), senão o Android dá erro.
+    O apóstrofo precisa de barra antes (\'), senão o Android dá erro.
 -->
 <resources>
     <string name="app_name">Guard</string>
+    <string name="brand_wordmark">guard</string>
     <string name="slogan">Help arrives even when you can\'t ask for it.</string>
-    <string name="back">← Back</string>
-
-    <!-- Tela 0 · Abertura (ui/splash/SplashActivity) -->
-    <string name="splash_footer">Crash detection for any smartphone</string>
+    <string name="back">Back</string>
 
     <!-- Tela 1 · New trip (ui/home/MainActivity) -->
-    <string name="history">History</string>
-    <string name="new_trip">New trip</string>
+    <string name="history">Trip history</string>
     <string name="ready_title">Ready to ride?</string>
+    <string name="home_subtitle">Pick your vehicle, check who gets alerted, and go.</string>
     <string name="vehicle">Vehicle</string>
     <string name="car">Car</string>
     <string name="motorcycle">Motorcycle</string>
     <string name="bicycle">Bicycle</string>
-    <string name="vehicle_limits">Limits: %1$.1f g · %2$.0f km/h in 2 s · %3$.0f°/s</string>
-    <string name="alert_order">Alert order</string>
+    <string name="limit_impact_value">%1$.1f g</string>
+    <string name="limit_drop_value">%1$.0f km/h</string>
+    <string name="limit_rotation_value">%1$.0f°/s</string>
+    <string name="limit_impact_label">impact</string>
+    <string name="limit_drop_label">speed drop in 2 s</string>
+    <string name="limit_rotation_label">rotation</string>
+    <string name="alert_order">Who gets alerted</string>
     <string name="edit">Edit</string>
     <string name="no_contacts">No emergency contacts yet. Add at least one before your trip.</string>
     <string name="start_trip">Start trip</string>
@@ -40,40 +42,43 @@
     <!-- Tela 2 · Trip mode (ui/trip/TripActivity) -->
     <string name="monitoring">Monitoring</string>
     <string name="kmh">km/h</string>
-    <string name="demo_location">Jundiaí, SP</string>
+    <string name="demo_location">Rod. Anhanguera, Jundiaí</string>
     <string name="impact">Impact</string>
     <string name="rotation">Rotation</string>
+    <string name="speed_drop">Speed drop</string>
+    <string name="stillness">Stillness</string>
     <string name="speed_value">%1$.0f</string>
     <string name="impact_value">%1$.1f g</string>
     <string name="rotation_value">%1$.0f°/s</string>
-    <string name="signals">%1$s IMPACT   %2$s SPEED DROP\n%3$s ROTATION   %4$s STILLNESS</string>
-    <string name="demo_title">Demo · simulate a situation</string>
+    <string name="demo_title">Simulate a situation</string>
     <string name="trip_status_idle">Riding normally. Pick a situation above to test the detector.</string>
-    <string name="trip_status_simulating">Simulating: %1$s. Expected: %2$s.</string>
-    <string name="expected_countdown">countdown starts</string>
+    <string name="trip_status_simulating">Simulating %1$s. Expected: %2$s.</string>
+    <string name="expected_countdown">the countdown starts</string>
     <string name="expected_watching">Guard keeps watching</string>
     <string name="trip_status_back">Back on the road. Guard is watching again.</string>
-    <string name="trip_ended">Trip ended · max %1$.0f km/h · %2$d alert(s)</string>
+    <string name="trip_ended">Trip saved. Top speed %1$.0f km/h, %2$d alert(s).</string>
     <string name="end_trip">End trip</string>
 
     <!-- Tela 3 · Are you OK? / alerta (ui/alert/AlertActivity) -->
     <string name="possible_accident">Possible accident</string>
-    <string name="alarm_on">Alarm on</string>
     <string name="are_you_ok">Are you OK?</string>
-    <string name="countdown_who">%1$s will get your location when the timer ends.</string>
+    <string name="countdown_who">%1$s gets your location when the timer ends.</string>
     <string name="countdown_no_contacts">No contacts registered.</string>
     <string name="im_ok">I\'m OK</string>
     <string name="alert_sent">Alert sent</string>
     <string name="live_location">Live location</string>
     <string name="alert_title">%1$s has your location</string>
-    <string name="alert_sent_to">Sent by %1$s to %2$s.</string>
-    <string name="alert_next">No reply in %1$ds? %2$s is next.</string>
+    <string name="notif_header">Guard · now</string>
+    <string name="alert_next">No reply in %1$d s? %2$s is next.</string>
     <string name="alert_last">Last contact on your list.</string>
+    <string name="queue_sent">Alerted</string>
+    <string name="queue_next">Next</string>
+    <string name="queue_waiting">Waiting</string>
     <string name="contact_confirmed">Contact replied: on the way</string>
     <string name="cancel_alert">I\'m OK, cancel alert</string>
     <string name="alert_cancelled">Alert cancelled</string>
     <string name="glad_ok">Glad you\'re OK.</string>
-    <string name="no_message_sent">No message was sent. The event will be saved in your trip history.</string>
+    <string name="no_message_sent">No message was sent. The event is saved in your trip history.</string>
     <string name="help_coming">Help is coming</string>
     <string name="contact_on_way">%1$s is on the way</string>
     <string name="location_updating">Your location keeps updating for %1$s.</string>
@@ -86,11 +91,12 @@
 
     <!-- Tela 4 · Contacts (ui/contacts/ContactsActivity) -->
     <string name="contacts_title">Who should we call?</string>
-    <string name="contacts_hint">Tap a contact to remove it. Priority 1 hears first.</string>
+    <string name="contacts_hint">Priority 1 hears first. Tap × to remove someone.</string>
+    <string name="new_contact">New contact</string>
     <string name="name">Name</string>
     <string name="phone">Phone</string>
     <string name="relationship">Relationship (optional)</string>
-    <string name="add_contact">+ Add contact</string>
+    <string name="add_contact">Add contact</string>
     <string name="remove_contact_title">Remove %1$s?</string>
     <string name="remove_contact_text">The others move up in the alert order.</string>
     <string name="remove">Remove</string>
@@ -98,8 +104,8 @@
 
     <!-- Tela 5 · History (ui/history/HistoryActivity) -->
     <string name="your_trips">Your trips</string>
-    <string name="history_summary">%1$d trip(s) · %2$d alert(s)</string>
-    <string name="trip_details">%1$s · %2$s · max %3$.0f km/h</string>
+    <string name="history_summary">%1$d trip(s), %2$d alert(s)</string>
+    <string name="trip_details">%1$s, %2$s, up to %3$.0f km/h</string>
     <string name="trip_alerts">%1$d alert(s)</string>
     <string name="trip_safe">Safe</string>
     <string name="duration_minutes">%1$d min</string>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tela 3 · Are you OK? / alerta. Código: ui/alert/AlertActivity.java
-     FrameLayout empilha os filhos um sobre o outro. Temos 3 painéis e só um fica visível por vez:
-     panel_count (contagem) -> panel_alert (alerta enviado) -> panel_end (final). -->
+<!--
+    Tela 3 · Are you OK? / alerta. Código: ui/alert/AlertActivity.java
+    FrameLayout empilha os filhos. Temos 3 painéis e só um fica visível por vez:
+    panel_count (contagem) -> panel_alert (alerta enviado) -> panel_end (final).
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
@@ -10,7 +12,7 @@
     android:background="@color/guard_alert_dark"
     android:fitsSystemWindows="true">
 
-    <!-- Painel 1: contagem regressiva -->
+    <!-- ===== Painel 1: contagem regressiva ===== -->
     <LinearLayout
         android:id="@+id/panel_count"
         android:layout_width="match_parent"
@@ -19,52 +21,51 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="monospace"
-                android:text="@string/possible_accident"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:text="@string/alarm_on"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/are_you_ok"
+            android:drawableStart="@drawable/ic_alert"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/white"
+            android:gravity="center_vertical"
+            android:text="@string/possible_accident"
             android:textColor="@color/white"
-            android:textSize="44sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
+        <TextView
+            style="@style/Guard.Display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:text="@string/are_you_ok"
+            android:textColor="@color/white"
+            android:textSize="50sp" />
+
+        <!-- Anel da contagem + halo que pulsa atrás -->
         <FrameLayout
-            android:layout_width="220dp"
-            android:layout_height="220dp"
-            android:layout_marginTop="32dp">
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="24dp">
+
+            <View
+                android:id="@+id/halo"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_pulse" />
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/ring"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:max="1000"
                 android:progress="1000"
                 app:indicatorColor="@color/white"
-                app:indicatorSize="220dp"
+                app:indicatorSize="210dp"
                 app:trackColor="@color/white_15"
+                app:trackCornerRadius="6dp"
                 app:trackThickness="12dp" />
 
             <TextView
@@ -72,128 +73,181 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:fontFamily="@font/funnel_display"
+                android:letterSpacing="-0.04"
                 android:text="30"
                 android:textColor="@color/white"
-                android:textSize="72sp"
+                android:textSize="84sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
         <TextView
             android:id="@+id/txt_who"
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
+            android:lineSpacingMultiplier="1.15"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="17sp" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_ok"
             style="@style/Guard.Button"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:backgroundTint="@color/white"
+            android:layout_height="80dp"
             android:text="@string/im_ok"
             android:textColor="@color/guard_alert_deep"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textSize="24sp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="24dp"
+            app:rippleColor="#33DE3F0B" />
     </LinearLayout>
 
-    <!-- Painel 2: alerta enviado / escalonamento -->
-    <LinearLayout
+    <!-- ===== Painel 2: alerta enviado + fila de contatos ===== -->
+    <ScrollView
         android:id="@+id/panel_alert"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp"
+        android:fillViewport="true"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/txt_alert_header"
-                android:layout_width="0dp"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_send"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/white"
+                    android:gravity="center_vertical"
+                    android:text="@string/alert_sent"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <View
+                    android:id="@+id/live_dot"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_end_icon" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="@string/live_location"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_alert_title"
+                style="@style/Guard.Display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/txt_alert_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/white_80"
+                android:textSize="15sp" />
+
+            <!-- Prévia do que o contato recebe: parece uma notificação de celular -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_notification"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_guard_logo" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/notif_header"
+                        android:textColor="@color/guard_muted"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/txt_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.15"
+                    android:textColor="@color/guard_ink"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Fila do escalonamento: quem já foi avisado, quem é o próximo (o Java preenche) -->
+            <LinearLayout
+                android:id="@+id/list_queue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_queue"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="6dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:fontFamily="monospace"
-                android:text="@string/alert_sent"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-            <TextView
-                android:layout_width="wrap_content"
+                android:minHeight="24dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_confirmed"
+                style="@style/Guard.Button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:text="@string/live_location"
-                android:textAllCaps="true"
+                android:text="@string/contact_confirmed"
+                android:textColor="@color/guard_alert_deep"
+                app:backgroundTint="@color/white"
+                app:rippleColor="#33DE3F0B" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel_alert"
+                style="@style/Guard.Button.Ghost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/cancel_alert"
                 android:textColor="@color/white"
-                android:textSize="12sp" />
+                app:strokeColor="@color/white" />
         </LinearLayout>
+    </ScrollView>
 
-        <TextView
-            android:id="@+id/txt_alert_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:textColor="@color/white"
-            android:textSize="34sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txt_alert_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_card_dark"
-            android:padding="16dp"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/txt_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card_dark"
-            android:fontFamily="monospace"
-            android:padding="16dp"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/btn_confirmed"
-            style="@style/Guard.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:text="@string/contact_confirmed"
-            android:textColor="@color/guard_alert_deep" />
-
-        <Button
-            android:id="@+id/btn_cancel_alert"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/cancel_alert"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:cornerRadius="16dp"
-            app:strokeColor="@color/white" />
-    </LinearLayout>
-
-    <!-- Painel 3: final (cancelado ou socorro a caminho) -->
+    <!-- ===== Painel 3: final (cancelado, socorro a caminho ou sem resposta) ===== -->
     <LinearLayout
         android:id="@+id/panel_end"
         android:layout_width="match_parent"
@@ -202,27 +256,41 @@
         android:padding="20dp"
         android:visibility="gone">
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6" />
+
+        <ImageView
+            android:id="@+id/img_end"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:background="@drawable/bg_end_icon"
+            android:contentDescription="@null"
+            android:padding="22dp"
+            android:scaleType="fitCenter" />
+
         <TextView
             android:id="@+id/txt_end_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:textAllCaps="true"
-            android:textSize="12sp" />
+            android:layout_marginTop="28dp"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txt_end_title"
-            android:layout_width="wrap_content"
+            style="@style/Guard.Display"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:textSize="34sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="6dp" />
 
         <TextView
             android:id="@+id/txt_end_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
+            android:lineSpacingMultiplier="1.15"
             android:textSize="16sp" />
 
         <Space
@@ -230,7 +298,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_back"
             style="@style/Guard.Button"
             android:layout_width="match_parent"

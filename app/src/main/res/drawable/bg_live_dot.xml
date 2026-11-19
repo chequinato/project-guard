@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Bolinha verde "ao vivo" (pisca no modo viagem). -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
     <solid android:color="@color/guard_live" />
-    <size android:width="8dp" android:height="8dp" />
+    <size android:width="10dp" android:height="10dp" />
 </shape>

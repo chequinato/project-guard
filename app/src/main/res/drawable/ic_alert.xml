@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícone 'triangle-alert' da biblioteca Lucide (licença ISC). A cor vem do tint de quem usa. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24.0dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:pathData="m 21.73,18 l -8,-14 a 2,2 0 0,0 -3.48,0 l -8,14 A 2,2 0 0,0 4,21 l 16,0 a 2,2 0 0,0 1.73,-3" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M 12,9 l 0,4" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M 12,17 l 0.01,0" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

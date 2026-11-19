@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Tela 0 · Abertura animada (uns 2 segundos). Código: ui/splash/SplashActivity.java
-    Tudo começa invisível ou pequeno; o Java anima cada peça na ordem certa.
+    Tela 0 · Abertura animada. Código: ui/splash/SplashActivity.java
+    O logo se monta sozinho (avd_guard_splash.xml); o Java anima o nome e o slogan
+    e, no fim, um círculo claro cresce a partir do logo e "abre" o app.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
@@ -9,7 +10,6 @@
     android:layout_height="match_parent"
     android:background="@color/guard_blue">
 
-    <!-- Bloco central: logo + nome + slogan -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,62 +19,57 @@
 
         <!-- FrameLayout empilha: o pulso fica ATRÁS do logo -->
         <FrameLayout
-            android:layout_width="220dp"
-            android:layout_height="220dp">
+            android:layout_width="200dp"
+            android:layout_height="200dp">
 
             <View
                 android:id="@+id/pulse"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:alpha="0"
                 android:background="@drawable/bg_pulse" />
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="140dp"
+                android:layout_width="118dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center"
-                android:alpha="0"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/avd_guard_logo" />
+                android:src="@drawable/avd_guard_splash" />
         </FrameLayout>
 
+        <!-- "guard" em minúsculas, igual ao cabeçalho do site -->
         <TextView
             android:id="@+id/txt_brand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0"
-            android:letterSpacing="-0.02"
-            android:text="@string/app_name"
+            android:fontFamily="@font/funnel_display"
+            android:letterSpacing="-0.04"
+            android:text="@string/brand_wordmark"
             android:textColor="@color/white"
-            android:textSize="48sp"
+            android:textSize="56sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txt_slogan"
-            android:layout_width="260dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:alpha="0"
             android:gravity="center"
+            android:lineSpacingMultiplier="1.15"
             android:text="@string/slogan"
-            android:textColor="@color/white"
+            android:textColor="@color/white_80"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- Rodapé discreto -->
-    <TextView
-        android:id="@+id/txt_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="40dp"
-        android:alpha="0"
-        android:fontFamily="monospace"
-        android:letterSpacing="0.06"
-        android:text="@string/splash_footer"
-        android:textAllCaps="true"
-        android:textColor="@color/white_60"
-        android:textSize="12sp" />
+    <!-- Camada clara que cresce em círculo no final, revelando o app -->
+    <View
+        android:id="@+id/reveal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/guard_page"
+        android:visibility="invisible" />
 </FrameLayout>

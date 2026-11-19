@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Fica parado": usado na tela de baixo enquanto o alerta abre ou fecha por cima. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="320" android:fromXDelta="0" android:toXDelta="0" />

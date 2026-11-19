@@ -3,13 +3,13 @@ package com.guard.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.guard.GuardApplication;
 import com.guard.R;
 import com.guard.model.EmergencyContact;
@@ -17,58 +17,60 @@ import com.guard.model.User;
 import com.guard.model.vehicle.Vehicle;
 import com.guard.model.vehicle.VehicleType;
 import com.guard.ui.common.ContactViews;
+import com.guard.ui.common.Press;
+import com.guard.ui.common.VehicleUi;
 import com.guard.ui.contacts.ContactsActivity;
 import com.guard.ui.history.HistoryActivity;
 import com.guard.ui.trip.TripActivity;
 
+import java.util.List;
+
 /**
- * Tela 1 · "New trip" (a primeira tela do app; layout: activity_main.xml).
- * Escolhe o veículo, mostra a ordem de alerta e começa a viagem.
+ * Tela 1 · "New trip" (layout: activity_main.xml).
+ * Escolhe o veículo, mostra os limites e a ordem de alerta, e começa a viagem.
  *
  * CONCEITO ANDROID: Activity
- * Cada tela do app é uma Activity. O Android chama métodos dela em momentos certos
- * (o "ciclo de vida"):
+ * Cada tela do app é uma Activity. O Android chama métodos dela em momentos certos (ciclo de vida):
  *   onCreate() -> a tela foi criada: montamos os componentes (roda uma vez)
  *   onResume() -> a tela voltou a aparecer (roda toda vez, inclusive ao voltar de outra tela)
- *   onPause()  -> a tela vai sair de vista
  */
 public class MainActivity extends AppCompatActivity {
 
     private GuardApplication app;
-    private MaterialButtonToggleGroup groupVehicle;   // os 3 botões Car / Motorcycle / Bicycle
+    private View tileCar, tileMoto, tileBike;   // os 3 blocos de veículo
     private LinearLayout listContacts;
-    private TextView txtNoContacts;
-    private TextView txtLimits;
+    private TextView txtNoContacts, txtLimitImpact, txtLimitDrop, txtLimitRotation;
     private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);   // "desenha" o XML na tela
+        setContentView(R.layout.activity_main);
         app = (GuardApplication) getApplication();
 
-        // Pegamos os componentes do XML pelo id.
-        groupVehicle = findViewById(R.id.group_vehicle);
         listContacts = findViewById(R.id.list_contacts);
         txtNoContacts = findViewById(R.id.txt_no_contacts);
-        txtLimits = findViewById(R.id.txt_limits);
+        txtLimitImpact = findViewById(R.id.txt_limit_impact);
+        txtLimitDrop = findViewById(R.id.txt_limit_drop);
+        txtLimitRotation = findViewById(R.id.txt_limit_rotation);
 
-        // LAMBDA: "(group, checkedId, isChecked) -> { ... }" é uma função sem nome,
-        // passada como parâmetro. Ela roda toda vez que um botão de veículo muda.
-        groupVehicle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) return;   // ignoramos o botão que foi DESmarcado
-            VehicleType type = vehicleForButton(checkedId);
-            app.getSettings().setVehicleType(type);   // lembra a escolha para a próxima vez
-            showLimits(Vehicle.of(type));
-        });
+        // Cada bloco é o mesmo layout (item_vehicle_tile.xml) com ícone e nome diferentes.
+        tileCar = setupTile(R.id.btn_car, VehicleType.CAR);
+        tileMoto = setupTile(R.id.btn_moto, VehicleType.MOTORCYCLE);
+        tileBike = setupTile(R.id.btn_bike, VehicleType.BICYCLE);
 
-        // "v -> ..." = lambda que recebe a View clicada (v), que aqui não precisamos usar.
+        View btnStart = findViewById(R.id.btn_start);
+        View btnHistory = findViewById(R.id.btn_history);
+        View btnEdit = findViewById(R.id.btn_edit_contacts);
+        Press.attach(btnStart, btnHistory, btnEdit);   // efeito de "afundar" ao tocar
+
         // Intent = "pedido para abrir outra tela".
-        findViewById(R.id.btn_edit_contacts).setOnClickListener(v ->
-                startActivity(new Intent(this, ContactsActivity.class)));
-        findViewById(R.id.btn_history).setOnClickListener(v ->
-                startActivity(new Intent(this, HistoryActivity.class)));
-        findViewById(R.id.btn_start).setOnClickListener(v -> startTrip());
+        btnEdit.setOnClickListener(v -> startActivity(new Intent(this, ContactsActivity.class)));
+        btnHistory.setOnClickListener(v -> startActivity(new Intent(this, HistoryActivity.class)));
+        btnStart.setOnClickListener(v -> {
+            Press.tick(v);
+            startTrip();
+        });
     }
 
     @Override
@@ -76,47 +78,62 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Recarregamos SEMPRE: o usuário pode ter mudado os contatos na outra tela.
         user = app.loadUser();
-        groupVehicle.check(buttonForVehicle(user.getSelectedVehicle().getType()));
-        showLimits(user.getSelectedVehicle());
+        selectVehicle(user.getSelectedVehicle().getType(), false);
         renderContacts();
     }
 
-    /** Converte o id do botão clicado no tipo de veículo. */
-    private VehicleType vehicleForButton(int buttonId) {
-        if (buttonId == R.id.btn_car) return VehicleType.CAR;
-        if (buttonId == R.id.btn_bike) return VehicleType.BICYCLE;
-        return VehicleType.MOTORCYCLE;
+    /** Preenche um bloco de veículo e liga o clique. Devolve o bloco para guardarmos no campo. */
+    private View setupTile(int tileId, VehicleType type) {
+        View tile = findViewById(tileId);
+        ((ImageView) tile.findViewById(R.id.tile_icon)).setImageResource(VehicleUi.icon(type));
+        ((TextView) tile.findViewById(R.id.tile_label)).setText(VehicleUi.label(type));
+        Press.attach(tile);
+        tile.setOnClickListener(v -> {
+            Press.tick(v);
+            app.getSettings().setVehicleType(type);   // lembra a escolha para a próxima vez
+            selectVehicle(type, true);
+        });
+        return tile;
     }
 
-    /** O caminho inverso: tipo de veículo -> id do botão. */
-    private int buttonForVehicle(VehicleType type) {
-        switch (type) {
-            case CAR:     return R.id.btn_car;
-            case BICYCLE: return R.id.btn_bike;
-            default:      return R.id.btn_moto;
+    /** Marca o bloco escolhido (o fundo fica azul sozinho, pelo bg_tile.xml) e mostra os limites. */
+    private void selectVehicle(VehicleType type, boolean animate) {
+        tileCar.setSelected(type == VehicleType.CAR);
+        tileMoto.setSelected(type == VehicleType.MOTORCYCLE);
+        tileBike.setSelected(type == VehicleType.BICYCLE);
+        showLimits(Vehicle.of(type), animate);
+    }
+
+    /** Mostra os 3 limites do veículo. Ao trocar de veículo, os números "piscam" para chamar atenção. */
+    private void showLimits(Vehicle v, boolean animate) {
+        txtLimitImpact.setText(getString(R.string.limit_impact_value, v.getImpactThresholdG()));
+        txtLimitDrop.setText(getString(R.string.limit_drop_value, v.getSpeedDropThresholdKmh()));
+        txtLimitRotation.setText(getString(R.string.limit_rotation_value, v.getRotationThresholdDegPerSec()));
+        if (animate) {
+            for (View t : new View[]{txtLimitImpact, txtLimitDrop, txtLimitRotation}) {
+                t.setAlpha(0.2f);
+                t.setTranslationY(6f);
+                t.animate().alpha(1f).translationY(0f).setDuration(260).start();
+            }
         }
-    }
-
-    /** Mostra os limites do veículo, ex.: "Limits: 3.0 g · 20 km/h in 2 s · 150°/s". */
-    private void showLimits(Vehicle v) {
-        txtLimits.setText(getString(R.string.vehicle_limits,
-                v.getImpactThresholdG(), v.getSpeedDropThresholdKmh(), v.getRotationThresholdDegPerSec()));
     }
 
     /** Desenha uma linha para cada contato, na ordem de prioridade. */
     private void renderContacts() {
-        listContacts.removeAllViews();   // limpa o que estava antes
-        for (EmergencyContact c : user.getContactsByPriority()) {
-            listContacts.addView(ContactViews.inflate(listContacts, c));
+        listContacts.removeAllViews();
+        List<EmergencyContact> contacts = user.getContactsByPriority();
+        for (int i = 0; i < contacts.size(); i++) {
+            boolean isLast = i == contacts.size() - 1;
+            listContacts.addView(ContactViews.inflate(listContacts, contacts.get(i), !isLast, null));
         }
         // View.GONE = some (e não ocupa espaço); View.VISIBLE = aparece.
+        listContacts.setVisibility(user.hasContacts() ? View.VISIBLE : View.GONE);
         txtNoContacts.setVisibility(user.hasContacts() ? View.GONE : View.VISIBLE);
     }
 
     private void startTrip() {
         // Sem contatos não há quem avisar: mandamos o usuário cadastrar antes.
         if (!user.hasContacts()) {
-            // Toast = aquela mensagem rápida que aparece e some sozinha.
             Toast.makeText(this, R.string.no_contacts, Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, ContactsActivity.class));
             return;

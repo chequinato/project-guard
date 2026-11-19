@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícone do veículo 'moto' desenhado no site do Guard. A cor vem do tint de quem usa. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="34dp" android:height="21.25dp"
+    android:viewportWidth="48" android:viewportHeight="30">
+    <path android:pathData="M 15,21 A 6,6 0 0,1 9,27 A 6,6 0 0,1 3,21 A 6,6 0 0,1 9,15 A 6,6 0 0,1 15,21 Z" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2.4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M 45,21 A 6,6 0 0,1 39,27 A 6,6 0 0,1 33,21 A 6,6 0 0,1 39,15 A 6,6 0 0,1 45,21 Z" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2.4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M 9,21 l 8,-10 l 10,0 l 4,5 l 8,0 l -4,-7 l -5,0 M 17,11 l -3,-4 l -4,0 M 31,16 L 21,16 l -4,5 l 18,0" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2.4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>
