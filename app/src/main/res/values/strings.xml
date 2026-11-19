@@ -59,6 +59,9 @@
     <string name="expected_watching">Guard keeps watching</string>
     <string name="trip_status_back">Back on the road. Guard is watching again.</string>
     <string name="trip_ended">Trip saved. Top speed %1$.0f km/h, %2$d alert(s).</string>
+    <string name="limit_marker_hint">The line in the middle is your vehicle\'s limit.</string>
+    <string name="signals_title">Detector signals</string>
+    <string name="false_alarms_title">False alarms: Guard should stay calm</string>
     <string name="end_trip">End trip</string>
     <string name="scenario_normal">Normal ride</string>
     <string name="scenario_crash">Real crash</string>
@@ -103,7 +106,13 @@
     <string name="sms_demo_status">Demo mode: no real SMS was sent.</string>
     <string name="sms_sending">Sending SMS to %1$s (%2$s)…</string>
     <string name="sms_sent">SMS sent to %1$s</string>
-    <string name="sms_failed">SMS to %1$s failed. Check the SIM card and signal.</string>
+    <string name="sms_failed">SMS to %1$s (%2$s) failed: %3$s</string>
+    <string name="sms_reason_generic">the carrier refused it. Check the number, the SMS plan and which SIM is the default for SMS.</string>
+    <string name="sms_reason_radio_off">the phone radio is off (airplane mode?).</string>
+    <string name="sms_reason_no_service">no mobile signal.</string>
+    <string name="sms_reason_limit">Android blocked it for sending too many SMS.</string>
+    <string name="sms_reason_not_sent">the phone didn\'t accept it (no SIM, or SMS blocked for the app).</string>
+    <string name="sms_reason_code">error code %1$d.</string>
 
     <!-- Tela 4 · Contacts (ui/contacts/ContactsActivity) -->
     <string name="contacts_title">Who should we call?</string>
@@ -117,9 +126,16 @@
     <string name="remove_contact_text">The others move up in the alert order.</string>
     <string name="remove">Remove</string>
     <string name="cancel">Cancel</string>
+    <string name="phone_helper">Area code + mobile, e.g. (11) 91234-5678</string>
+    <string name="phone_placeholder">(11) 91234-5678</string>
+    <string name="error_phone_chars">Use only numbers.</string>
+    <string name="error_phone_country">Only Brazilian numbers (+55).</string>
+    <string name="error_phone_ddd">Area code %1$s doesn\'t exist in Brazil.</string>
+    <string name="error_phone_mobile">It must be a mobile number: 9 after the area code.</string>
+    <string name="error_phone_duplicate">This number is already on the list.</string>
     <string name="error_name">Type the contact\'s name.</string>
     <string name="error_phone_required">Type a phone number.</string>
-    <string name="error_phone_invalid">This phone number looks too short.</string>
+    <string name="error_phone_invalid">Type the area code + 9 digits, like (11) 91234-5678.</string>
     <string name="error_remove">Couldn\'t remove this contact. Try again.</string>
 
     <!-- Tela 5 · History (ui/history/HistoryActivity) -->

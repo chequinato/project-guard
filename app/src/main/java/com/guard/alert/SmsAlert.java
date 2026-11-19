@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.telephony.SmsManager;
+import android.telephony.SubscriptionManager;
 
 import com.guard.model.EmergencyContact;
 
@@ -24,6 +25,8 @@ public class SmsAlert implements AlertChannel {
     public static final String ACTION_SENT = "com.guard.SMS_SENT";
     /** Extra com o nome do contato que recebeu. */
     public static final String EXTRA_CONTACT = "contact";
+    /** Extra com o telefone usado (para mostrar no erro). */
+    public static final String EXTRA_PHONE = "phone";
 
     private final Context context;
     private int requestCode = 0;   // um número diferente por envio, para os avisos não se misturarem
@@ -51,7 +54,8 @@ public class SmsAlert implements AlertChannel {
             // setPackage: só o nosso app recebe esse aviso.
             Intent sent = new Intent(ACTION_SENT)
                     .setPackage(context.getPackageName())
-                    .putExtra(EXTRA_CONTACT, contact.getName());
+                    .putExtra(EXTRA_CONTACT, contact.getName())
+                    .putExtra(EXTRA_PHONE, contact.getPhone());
             PendingIntent onSent = PendingIntent.getBroadcast(context, requestCode++, sent,
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             // Um aviso por parte da mensagem (a lista precisa ter o mesmo tamanho de "parts").
@@ -66,13 +70,25 @@ public class SmsAlert implements AlertChannel {
         }
     }
 
-    /** A forma de pegar o SmsManager mudou no Android 12 (API 31, versão "S"). */
-    @SuppressWarnings("deprecation")   // getDefault() é antigo, mas é o certo antes do Android 12
+    /**
+     * Pega o SmsManager do chip certo.
+     *
+     * Celular com 2 chips: se não dissermos qual usar, alguns aparelhos recusam o envio.
+     * Por isso pedimos ao Android o chip PADRÃO para SMS (ou, se não houver, o chip padrão geral).
+     * A forma de pegar o SmsManager também mudou no Android 12 (API 31, versão "S").
+     */
+    @SuppressWarnings("deprecation")   // getDefault()/getSmsManagerForSubscriptionId são antigos, mas certos antes do 12
     private SmsManager smsManager() {
+        int subId = SubscriptionManager.getDefaultSmsSubscriptionId();
+        if (subId == SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
+            subId = SubscriptionManager.getDefaultSubscriptionId();
+        }
+        boolean hasSim = subId != SubscriptionManager.INVALID_SUBSCRIPTION_ID;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             SmsManager manager = context.getSystemService(SmsManager.class);
-            if (manager != null) return manager;
+            if (manager != null) return hasSim ? manager.createForSubscriptionId(subId) : manager;
         }
-        return SmsManager.getDefault();
+        return hasSim ? SmsManager.getSmsManagerForSubscriptionId(subId) : SmsManager.getDefault();
     }
 }

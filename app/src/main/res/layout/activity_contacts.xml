@@ -63,6 +63,7 @@
 
             <!-- TextInputLayout = campo do Material Design: o rótulo sobe quando você digita -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_name"
                 style="@style/Guard.Field"
                 android:hint="@string/name">
                 <com.google.android.material.textfield.TextInputEditText
@@ -72,15 +73,22 @@
                     android:inputType="textPersonName|textCapWords" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- placeholderText = exemplo cinza dentro do campo; helperText = dica embaixo.
+                 Quando o número está fora do padrão, o Java troca a dica por um erro (setError). -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_phone"
                 style="@style/Guard.Field"
                 android:layout_marginTop="10dp"
-                android:hint="@string/phone">
+                android:hint="@string/phone"
+                app:helperText="@string/phone_helper"
+                app:placeholderText="@string/phone_placeholder">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
+                    android:digits="0123456789+()- "
+                    android:inputType="phone"
+                    android:maxLength="20" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

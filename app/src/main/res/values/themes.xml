@@ -113,17 +113,39 @@
     <!-- Um dos 4 sinais do modo viagem (ícone + nome). Fundo e cor mudam quando ativo. -->
     <style name="Guard.Signal" parent="">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">52dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_signal</item>
-        <item name="android:drawablePadding">8dp</item>
+        <item name="android:drawablePadding">10dp</item>
         <item name="android:drawableTint">@color/signal_fg</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:paddingHorizontal">14dp</item>
+        <item name="android:paddingVertical">8dp</item>
         <item name="android:textColor">@color/signal_fg</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:maxLines">1</item>
+        <item name="android:lineSpacingMultiplier">1.05</item>
+        <!-- 2 linhas: em português "Queda de velocidade" não cabe em uma -->
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <!-- Bloco de cenário (tela de viagem): metade da largura, texto centralizado em até 2 linhas -->
+    <style name="Guard.Scenario" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_scenario</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:paddingVertical">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
 
     <!-- Campo de texto com contorno arredondado -->
@@ -136,6 +158,11 @@
         <item name="boxCornerRadiusBottomEnd">14dp</item>
         <item name="boxStrokeColor">@color/guard_blue</item>
         <item name="hintTextColor">@color/guard_blue</item>
+        <!-- Erro e dica nas cores do Guard (não no vermelho padrão do Material) -->
+        <item name="boxStrokeErrorColor">@color/guard_alert_dark</item>
+        <item name="errorTextColor">@color/guard_alert_dark</item>
+        <item name="errorIconTint">@color/guard_alert_dark</item>
+        <item name="helperTextTextColor">@color/guard_muted</item>
     </style>
 
     <!-- ===== Botões ===== -->

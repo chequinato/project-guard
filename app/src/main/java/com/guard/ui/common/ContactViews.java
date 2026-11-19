@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.guard.R;
+import com.guard.model.BrazilianPhone;
 import com.guard.model.EmergencyContact;
 
 /**
@@ -42,7 +43,10 @@ public final class ContactViews {
 
         ((TextView) row.findViewById(R.id.txt_priority)).setText(String.valueOf(contact.getPriority()));
         ((TextView) row.findViewById(R.id.txt_name)).setText(contact.getName());
-        String subtitle = contact.getRelationship().isEmpty() ? contact.getPhone() : contact.getRelationship();
+        // Sem parentesco, mostramos o telefone já formatado: "(11) 91234-5678".
+        String subtitle = contact.getRelationship().isEmpty()
+                ? BrazilianPhone.format(contact.getPhone())
+                : contact.getRelationship();
         ((TextView) row.findViewById(R.id.txt_relationship)).setText(subtitle);
 
         // Avatar: primeira letra + cor que depende da prioridade (1 azul, 2 laranja, 3 verde, 4 azul...).

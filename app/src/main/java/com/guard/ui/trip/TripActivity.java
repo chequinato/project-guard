@@ -3,8 +3,6 @@ package com.guard.ui.trip;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,10 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.guard.GuardApplication;
 import com.guard.R;
@@ -119,7 +114,7 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         txtVehicle.setCompoundDrawablesRelativeWithIntrinsicBounds(VehicleUi.icon(session.getVehicle().getType()), 0, 0, 0);
 
         startLiveDot();
-        buildScenarioChips();
+        setupScenarioButtons();
 
         View btnEnd = findViewById(R.id.btn_end);
         Press.attach(btnEnd);
@@ -143,32 +138,28 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         blink.start();
     }
 
-    /** Cria um botão ("chip") para cada cenário do simulador. O "Real crash" fica em laranja. */
-    private void buildScenarioChips() {
-        ChipGroup group = findViewById(R.id.group_scenarios);
-        float dp = getResources().getDisplayMetrics().density;
-        Typeface font = Typeface.create(getResources().getFont(R.font.funnel_sans), Typeface.BOLD);
+    /**
+     * Liga os botões do simulador aos cenários.
+     * "Real crash" fica sozinho em destaque (é o único que deve disparar o alerta);
+     * os outros 4 são alarmes falsos, em grade 2x2 (layout: activity_trip.xml).
+     */
+    private void setupScenarioButtons() {
+        bindScenario(R.id.scn_crash, Scenario.CRASH);
+        bindScenario(R.id.scn_dropped, Scenario.PHONE_DROPPED);
+        bindScenario(R.id.scn_brake, Scenario.HARD_BRAKE);
+        bindScenario(R.id.scn_bump, Scenario.SPEED_BUMP);
+        bindScenario(R.id.scn_parked, Scenario.PARKED);
+    }
 
-        for (Scenario scenario : Scenario.values()) {
-            if (scenario == Scenario.NORMAL_RIDE) continue;
-            boolean isCrash = scenario == Scenario.CRASH;
-
-            Chip chip = new Chip(this);
-            chip.setText(ScenarioUi.label(scenario));
-            chip.setTypeface(font);
-            chip.setTextColor(ContextCompat.getColor(this, R.color.white));
-            chip.setChipBackgroundColor(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, isCrash ? R.color.guard_alert_dark : R.color.navy_card)));
-            chip.setChipStrokeColor(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, isCrash ? R.color.guard_alert_dark : R.color.navy_line)));
-            chip.setChipStrokeWidth(1.5f * dp);
-            chip.setRippleColor(ColorStateList.valueOf(0x33FFFFFF));
-            chip.setOnClickListener(v -> {
-                Press.tick(v);
-                play(scenario);
-            });
-            group.addView(chip);
-        }
+    /** Põe o nome traduzido do cenário no botão e o que acontece ao tocar. */
+    private void bindScenario(int viewId, Scenario scenario) {
+        TextView button = findViewById(viewId);
+        button.setText(ScenarioUi.label(scenario));
+        Press.attach(button);   // afunda ao tocar, como os outros botões do app
+        button.setOnClickListener(v -> {
+            Press.tick(v);
+            play(scenario);
+        });
     }
 
     /** Troca as próximas leituras pelas do cenário escolhido. */
@@ -176,7 +167,15 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         queue.clear();
         queue.addAll(MockSensorSource.generate(scenario, nextTimestamp));
         String expected = getString(scenario.shouldAlert() ? R.string.expected_countdown : R.string.expected_watching);
-        txtStatus.setText(getString(R.string.trip_status_simulating, getString(ScenarioUi.label(scenario)).toLowerCase(), expected));
+        showStatus(getString(R.string.trip_status_simulating, getString(ScenarioUi.label(scenario)).toLowerCase(), expected));
+    }
+
+    /** Troca o texto do balão com uma entrada rápida, para o olho perceber a resposta. */
+    private void showStatus(String text) {
+        txtStatus.setText(text);
+        txtStatus.setAlpha(0f);
+        txtStatus.setTranslationY(8f);
+        txtStatus.animate().alpha(1f).translationY(0f).setDuration(220).start();
     }
 
     // ---------- Avisos da TripSession (contrato TripSession.Listener) ----------
@@ -246,7 +245,7 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
             waitingForAlert = false;
             queue.clear();
             session.resumeAfterIncident();
-            txtStatus.setText(R.string.trip_status_back);
+            showStatus(getString(R.string.trip_status_back));
         }
         handler.post(ticker);   // liga o relógio da simulação
     }

@@ -49,6 +49,9 @@
     <string name="expected_watching">o Guard continua vigiando</string>
     <string name="trip_status_back">De volta à estrada. O Guard está vigiando de novo.</string>
     <string name="trip_ended">Viagem salva. Velocidade máxima %1$.0f km/h, %2$d alerta(s).</string>
+    <string name="limit_marker_hint">A marca no meio é o limite do seu veículo.</string>
+    <string name="signals_title">Sinais do detector</string>
+    <string name="false_alarms_title">Alarmes falsos: o Guard não deve alertar</string>
     <string name="end_trip">Encerrar viagem</string>
     <string name="scenario_normal">Andando normal</string>
     <string name="scenario_crash">Acidente real</string>
@@ -92,7 +95,13 @@
     <string name="sms_demo_status">Modo demonstração: nenhum SMS de verdade foi enviado.</string>
     <string name="sms_sending">Enviando SMS para %1$s (%2$s)…</string>
     <string name="sms_sent">SMS enviado para %1$s</string>
-    <string name="sms_failed">O SMS para %1$s falhou. Confira o chip e o sinal.</string>
+    <string name="sms_failed">O SMS para %1$s (%2$s) falhou: %3$s</string>
+    <string name="sms_reason_generic">a operadora recusou. Confira o número, se o chip tem plano de SMS e qual chip é o padrão para SMS.</string>
+    <string name="sms_reason_radio_off">o rádio do celular está desligado (modo avião?).</string>
+    <string name="sms_reason_no_service">sem sinal da operadora.</string>
+    <string name="sms_reason_limit">o Android bloqueou por excesso de SMS.</string>
+    <string name="sms_reason_not_sent">o celular não aceitou o envio (sem chip ou SMS bloqueado para o app).</string>
+    <string name="sms_reason_code">código de erro %1$d.</string>
 
     <!-- Tela 4 · Contatos -->
     <string name="contacts_title">Quem devemos avisar?</string>
@@ -106,9 +115,16 @@
     <string name="remove_contact_text">Os outros sobem na ordem de alerta.</string>
     <string name="remove">Remover</string>
     <string name="cancel">Cancelar</string>
+    <string name="phone_helper">DDD + celular, ex.: (11) 91234-5678</string>
+    <string name="phone_placeholder">(11) 91234-5678</string>
+    <string name="error_phone_chars">Use só números.</string>
+    <string name="error_phone_country">Só números do Brasil (+55).</string>
+    <string name="error_phone_ddd">O DDD %1$s não existe.</string>
+    <string name="error_phone_mobile">Precisa ser celular: 9 logo depois do DDD.</string>
+    <string name="error_phone_duplicate">Esse número já está na lista.</string>
     <string name="error_name">Digite o nome do contato.</string>
     <string name="error_phone_required">Digite um telefone.</string>
-    <string name="error_phone_invalid">Esse telefone parece curto demais.</string>
+    <string name="error_phone_invalid">Digite o DDD + 9 dígitos, como (11) 91234-5678.</string>
     <string name="error_remove">Não deu para remover este contato. Tente de novo.</string>
 
     <!-- Tela 5 · Histórico -->

@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.VibrationEffect;
+import android.telephony.SmsManager;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.guard.alert.AlertService;
 import com.guard.alert.DemoAlert;
 import com.guard.alert.MessageTemplate;
 import com.guard.alert.SmsAlert;
+import com.guard.model.BrazilianPhone;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.User;
@@ -82,10 +84,16 @@ public class AlertActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String who = intent.getStringExtra(SmsAlert.EXTRA_CONTACT);
-            boolean ok = getResultCode() == Activity.RESULT_OK;
-            setStatus(getString(ok ? R.string.sms_sent : R.string.sms_failed, who),
-                    ok ? R.drawable.ic_check : R.drawable.ic_alert, ok ? R.color.guard_ok_dark : R.color.guard_alert_dark);
-            if (ok) Press.tick(txtSmsStatus);
+            String phone = BrazilianPhone.format(intent.getStringExtra(SmsAlert.EXTRA_PHONE));
+            int code = getResultCode();
+            if (code == Activity.RESULT_OK) {
+                setStatus(getString(R.string.sms_sent, who), R.drawable.ic_check, R.color.guard_ok_dark);
+                Press.tick(txtSmsStatus);
+            } else {
+                // Mostra o MOTIVO que o Android devolveu, para dar para resolver na hora.
+                setStatus(getString(R.string.sms_failed, who, phone, failureReason(code)),
+                        R.drawable.ic_alert, R.color.guard_alert_dark);
+            }
         }
     };
     private LinearLayout listQueue;
@@ -246,10 +254,23 @@ public class AlertActivity extends AppCompatActivity {
             setStatus(getString(R.string.sms_demo_status), R.drawable.ic_shield, R.color.guard_muted);
         } else if (alertService.wasLastSendOk()) {
             // "Enviando..." até o Android confirmar (o smsResult troca o texto depois).
-            setStatus(getString(R.string.sms_sending, current.getName(), current.getPhone()),
+            setStatus(getString(R.string.sms_sending, current.getName(), BrazilianPhone.format(current.getPhone())),
                     R.drawable.ic_send, R.color.guard_muted);
         } else {
-            setStatus(getString(R.string.sms_failed, current.getName()), R.drawable.ic_alert, R.color.guard_alert_dark);
+            // O envio nem saiu do celular (sem chip, SMS bloqueado para o app...).
+            setStatus(getString(R.string.sms_failed, current.getName(), BrazilianPhone.format(current.getPhone()),
+                    getString(R.string.sms_reason_not_sent)), R.drawable.ic_alert, R.color.guard_alert_dark);
+        }
+    }
+
+    /** Traduz o código de erro do Android (SmsManager.RESULT_ERROR_...) para uma frase. */
+    private String failureReason(int code) {
+        switch (code) {
+            case SmsManager.RESULT_ERROR_GENERIC_FAILURE: return getString(R.string.sms_reason_generic);
+            case SmsManager.RESULT_ERROR_RADIO_OFF:       return getString(R.string.sms_reason_radio_off);
+            case SmsManager.RESULT_ERROR_NO_SERVICE:      return getString(R.string.sms_reason_no_service);
+            case SmsManager.RESULT_ERROR_LIMIT_EXCEEDED:  return getString(R.string.sms_reason_limit);
+            default:                                      return getString(R.string.sms_reason_code, code);
         }
     }
 

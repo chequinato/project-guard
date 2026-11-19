@@ -49,6 +49,8 @@ guard.contact2.phone=+55119XXXXXXXX
 ```
 
   Depois: **Build → Rebuild Project** e rode de novo. Os contatos são criados na primeira abertura; se o app já estava instalado com os contatos antigos, a versão nova do banco recria a lista sozinha. Sem essas linhas, o app usa números inválidos (DDD 00), então ninguém de fora recebe mensagem.
+- Também dá para cadastrar os números direto no app, em **Edit**: o campo só aceita celular brasileiro válido (DDD que existe + 9 dígitos), digitado de qualquer jeito: `(11) 91234-5678`, `11912345678` ou `+55 11 91234-5678`.
+- Se o SMS falhar, a tela de alerta mostra o motivo que o Android devolveu (operadora recusou, sem sinal, modo avião...). Os mais comuns: número de demonstração (DDD 00), chip sem plano de SMS, celular com 2 chips sem um padrão para SMS e, em celulares Xiaomi, a permissão extra "Enviar SMS" em Configurações › Apps › Guard › Outras permissões.
 
 ---
 

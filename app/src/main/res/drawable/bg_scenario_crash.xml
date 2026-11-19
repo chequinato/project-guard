@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Botão "Real crash": o único laranja da tela, porque é o que dispara o alerta. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#33FFFFFF">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/guard_alert_dark" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</ripple>
