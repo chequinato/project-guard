@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sinais do modo viagem: escuro sobre branco quando o sinal está ativo, azul-claro apagado quando não. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true" android:color="@color/guard_navy" />
+    <item android:color="@color/navy_muted" />
+</selector>

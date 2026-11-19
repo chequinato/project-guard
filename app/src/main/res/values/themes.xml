@@ -1,58 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    TEMAS e ESTILOS: a "roupa" do app.
+    - Um tema (Theme.Guard...) vale para a tela inteira: cores do sistema, fonte padrão, transições.
+    - Um estilo (Guard.Title, Guard.Button...) é um conjunto de atributos reaproveitado em vários componentes.
+    Um estilo com ponto no nome herda do anterior: Guard.Button.Ghost herda de Guard.Button.
+-->
 <resources>
+
+    <!-- Tema base: telas claras -->
     <style name="Theme.Guard" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/guard_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/guard_alert</item>
+        <item name="colorControlHighlight">#1A104FB6</item>
         <item name="android:colorBackground">@color/guard_page</item>
         <item name="android:windowBackground">@color/guard_page</item>
         <item name="android:statusBarColor">@color/guard_page</item>
+        <item name="android:navigationBarColor">@color/guard_page</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:textColorPrimary">@color/guard_ink</item>
         <item name="android:textColorSecondary">@color/guard_muted</item>
+        <!-- Fonte padrão de TODO texto do app: Funnel Sans, a mesma do site -->
+        <item name="android:fontFamily">@font/funnel_sans</item>
+        <item name="fontFamily">@font/funnel_sans</item>
+        <!-- Transições entre telas: a nova entra deslizando da direita -->
+        <item name="android:windowAnimationStyle">@style/Guard.ScreenTransition</item>
     </style>
 
-    <!-- Telas escuras (modo viagem) e de alerta (laranja) -->
+    <!-- Modo viagem: tudo escuro -->
     <style name="Theme.Guard.Dark" parent="Theme.Guard">
         <item name="android:windowBackground">@color/guard_navy</item>
         <item name="android:statusBarColor">@color/guard_navy</item>
+        <item name="android:navigationBarColor">@color/guard_navy</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="colorControlHighlight">#33FFFFFF</item>
     </style>
 
+    <!-- Alerta: laranja, e a tela entra crescendo (mais urgente que um deslize) -->
     <style name="Theme.Guard.Alert" parent="Theme.Guard">
         <item name="android:windowBackground">@color/guard_alert_dark</item>
         <item name="android:statusBarColor">@color/guard_alert_dark</item>
+        <item name="android:navigationBarColor">@color/guard_alert_dark</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="colorControlHighlight">#33FFFFFF</item>
+        <item name="android:windowAnimationStyle">@style/Guard.AlertTransition</item>
     </style>
 
-    <!-- Tela de abertura: fundo azul desde o primeiro instante (sem "piscar" branco) -->
+    <!-- Abertura: azul desde o primeiro instante (sem "piscar" branco) -->
     <style name="Theme.Guard.Splash" parent="Theme.Guard">
         <item name="android:windowBackground">@color/guard_blue</item>
         <item name="android:statusBarColor">@color/guard_blue</item>
         <item name="android:navigationBarColor">@color/guard_blue</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
-    <!-- Estilos de texto reutilizados -->
-    <style name="Guard.Title" parent="">
-        <item name="android:textSize">30sp</item>
+    <!-- ===== Transições (arquivos em res/anim) ===== -->
+    <style name="Guard.ScreenTransition" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/screen_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/screen_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/screen_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/screen_out_right</item>
+    </style>
+
+    <style name="Guard.AlertTransition" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/alert_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/stay</item>
+        <item name="android:activityCloseEnterAnimation">@anim/stay</item>
+        <item name="android:activityCloseExitAnimation">@anim/alert_out</item>
+    </style>
+
+    <!-- ===== Texto ===== -->
+    <!-- Títulos grandes: Funnel Display, levemente "apertado" como no site -->
+    <style name="Guard.Display">
+        <item name="android:fontFamily">@font/funnel_display</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:lineSpacingMultiplier">0.95</item>
         <item name="android:textColor">@color/guard_ink</item>
-        <item name="android:letterSpacing">-0.02</item>
     </style>
 
-    <style name="Guard.Label" parent="">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.06</item>
-        <item name="android:fontFamily">monospace</item>
+    <style name="Guard.Title" parent="Guard.Display">
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <!-- Nome de cada bloco da tela ("Vehicle", "Who gets alerted") -->
+    <style name="Guard.Section">
+        <item name="android:fontFamily">@font/funnel_sans</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/guard_ink</item>
+    </style>
+
+    <style name="Guard.Body">
+        <item name="android:fontFamily">@font/funnel_sans</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
         <item name="android:textColor">@color/guard_muted</item>
     </style>
 
+    <!-- Leituras de sensor: DM Mono, como os números do site -->
+    <style name="Guard.Data">
+        <item name="android:fontFamily">@font/dm_mono</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/guard_ink</item>
+    </style>
+
+    <!-- Um dos 4 sinais do modo viagem (ícone + nome). Fundo e cor mudam quando ativo. -->
+    <style name="Guard.Signal">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_signal</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:drawableTint">@color/signal_fg</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:textColor">@color/signal_fg</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- Campo de texto com contorno arredondado -->
+    <style name="Guard.Field" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
+        <item name="boxStrokeColor">@color/guard_blue</item>
+        <item name="hintTextColor">@color/guard_blue</item>
+    </style>
+
+    <!-- ===== Botões ===== -->
     <style name="Guard.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">60dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:fontFamily">@font/funnel_sans</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">18dp</item>
+        <item name="backgroundTint">@color/btn_primary_bg</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">10dp</item>
+        <item name="iconSize">20dp</item>
+    </style>
+
+    <!-- Botão "fantasma": só o contorno -->
+    <style name="Guard.Button.Ghost" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:minHeight">56dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:fontFamily">@font/funnel_sans</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textAllCaps">false</item>
-        <item name="cornerRadius">16dp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">18dp</item>
+        <item name="strokeWidth">1.5dp</item>
+    </style>
+
+    <!-- Botão redondo só com ícone (voltar, histórico) -->
+    <style name="Guard.IconButton">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:padding">11dp</item>
+        <item name="android:background">@drawable/bg_icon_button</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">@color/guard_ink</item>
     </style>
 </resources>

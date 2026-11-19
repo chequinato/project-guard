@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tela 2 · Trip mode (tela escura "Monitoring" do site). Código: ui/trip/TripActivity.java
-     Os textos "0", "0.0 g" e "0°/s" são só o valor inicial: a Activity troca a cada leitura. -->
+<!--
+    Tela 2 · Trip mode (tela escura "Monitoring" do site). Código: ui/trip/TripActivity.java
+    Os valores "0", "0.0 g" e "0°/s" são só o começo: a Activity troca a cada leitura.
+-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -13,8 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="20dp">
 
+        <!-- Topo: "ao vivo" + veículo -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,8 +27,9 @@
             android:orientation="horizontal">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
+                android:id="@+id/live_dot"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:background="@drawable/bg_live_dot" />
 
             <TextView
@@ -31,27 +37,30 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:fontFamily="monospace"
                 android:text="@string/monitoring"
-                android:textAllCaps="true"
                 android:textColor="@color/guard_live"
-                android:textSize="12sp" />
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txt_vehicle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:textAllCaps="true"
-                android:textColor="@color/white_60"
-                android:textSize="12sp" />
+                android:layout_height="36dp"
+                android:background="@drawable/bg_chip_dark"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/white"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="14dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Velocidade grande -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="28dp"
             android:baselineAligned="true"
             android:orientation="horizontal">
 
@@ -59,9 +68,12 @@
                 android:id="@+id/txt_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/funnel_display"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.04"
                 android:text="0"
                 android:textColor="@color/white"
-                android:textSize="88sp"
+                android:textSize="112sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -69,25 +81,29 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="@string/kmh"
-                android:textColor="@color/white_60"
+                android:textColor="@color/navy_muted"
                 android:textSize="20sp" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txt_where"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_pin"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/navy_muted"
+            android:gravity="center_vertical"
             android:text="@string/demo_location"
-            android:textColor="@color/white_60" />
+            android:textColor="@color/navy_muted"
+            android:textSize="14sp" />
 
-        <!-- Barras de impacto e rotação -->
+        <!-- Sensores: duas barras + os 4 sinais -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/bg_card_dark"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="18dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -98,12 +114,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/impact"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
                 <TextView
                     android:id="@+id/txt_impact"
+                    style="@style/Guard.Data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
                     android:text="0.0 g"
                     android:textColor="@color/white" />
             </LinearLayout>
@@ -112,29 +129,30 @@
                 android:id="@+id/bar_impact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="8dp"
                 android:max="100"
                 app:indicatorColor="@color/guard_blue_light"
-                app:trackColor="@color/white_15"
+                app:trackColor="@color/navy_line"
                 app:trackCornerRadius="4dp"
                 app:trackThickness="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/rotation"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
                 <TextView
                     android:id="@+id/txt_rotation"
+                    style="@style/Guard.Data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
                     android:text="0°/s"
                     android:textColor="@color/white" />
             </LinearLayout>
@@ -143,50 +161,68 @@
                 android:id="@+id/bar_rotation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="8dp"
                 android:max="100"
                 app:indicatorColor="@color/guard_blue_light"
-                app:trackColor="@color/white_15"
+                app:trackColor="@color/navy_line"
                 app:trackCornerRadius="4dp"
                 app:trackThickness="8dp" />
 
-            <!-- Os 4 sinais: acendem quando o detector dispara -->
-            <TextView
-                android:id="@+id/txt_signals"
+            <!-- Os 4 sinais: acendem (setActivated) quando o detector dispara -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="monospace"
-                android:textColor="@color/white_60"
-                android:textSize="12sp" />
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+                <TextView android:id="@+id/sig_impact" style="@style/Guard.Signal"
+                    android:layout_marginEnd="8dp"
+                    android:drawableStart="@drawable/ic_impact" android:text="@string/impact" />
+                <TextView android:id="@+id/sig_drop" style="@style/Guard.Signal"
+                    android:drawableStart="@drawable/ic_speed" android:text="@string/speed_drop" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+                <TextView android:id="@+id/sig_rotation" style="@style/Guard.Signal"
+                    android:layout_marginEnd="8dp"
+                    android:drawableStart="@drawable/ic_rotation" android:text="@string/rotation" />
+                <TextView android:id="@+id/sig_still" style="@style/Guard.Signal"
+                    android:drawableStart="@drawable/ic_still" android:text="@string/stillness" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Demo: botões que tocam os cenários do simulador -->
+        <!-- Demo: botões que tocam os cenários do simulador (criados no Java) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:fontFamily="monospace"
+            android:layout_marginTop="24dp"
             android:text="@string/demo_title"
-            android:textAllCaps="true"
-            android:textColor="@color/white_60"
-            android:textSize="12sp" />
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/group_scenarios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            app:chipSpacingHorizontal="8dp" />
 
         <TextView
             android:id="@+id/txt_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card_dark"
-            android:padding="14dp"
+            android:background="@drawable/bg_bubble_dark"
+            android:lineSpacingMultiplier="1.15"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
             android:text="@string/trip_status_idle"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="15sp" />
 
         <Space
             android:layout_width="match_parent"
@@ -194,15 +230,13 @@
             android:layout_weight="1"
             android:minHeight="24dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_end"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Guard.Button.Ghost"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:text="@string/end_trip"
-            android:textAllCaps="false"
             android:textColor="@color/white"
-            app:cornerRadius="16dp"
             app:strokeColor="@color/white_60" />
     </LinearLayout>
 </ScrollView>

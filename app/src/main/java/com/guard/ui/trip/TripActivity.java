@@ -1,14 +1,20 @@
 package com.guard.ui.trip;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -27,6 +33,8 @@ import com.guard.sensor.MockSensorSource;
 import com.guard.sensor.Scenario;
 import com.guard.session.TripSession;
 import com.guard.ui.alert.AlertActivity;
+import com.guard.ui.common.Press;
+import com.guard.ui.common.VehicleUi;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -44,17 +52,12 @@ import java.util.Map;
  */
 public class TripActivity extends AppCompatActivity implements TripSession.Listener {
 
-    /**
-     * Cada leitura simulada representa 500 ms. Tocamos uma a cada 250 ms
-     * (2x mais rápido) para a demonstração não ficar arrastada.
-     */
+    /** Cada leitura simulada vale 500 ms; tocamos a cada 250 ms (2x mais rápido) para a demo não arrastar. */
     private static final long TICK_MILLIS = 250;
 
     // HANDLER: agenda tarefas para rodar mais tarde na "thread principal" (a que mexe na tela).
     private final Handler handler = new Handler(Looper.getMainLooper());
-
-    // Fila de leituras que ainda vão ser tocadas.
-    private final Deque<SensorReading> queue = new ArrayDeque<>();
+    private final Deque<SensorReading> queue = new ArrayDeque<>();   // leituras que ainda vão tocar
 
     private GuardApplication app;
     private TripSession session;
@@ -62,29 +65,26 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
     private long nextTimestamp;          // horário simulado da próxima leitura
     private boolean waitingForAlert;     // true enquanto a tela "Are you OK?" está aberta
     private boolean ended;               // evita encerrar (e salvar) a viagem duas vezes
+    private float shownSpeed;            // velocidade que está desenhada agora (para animar até a nova)
+    private ValueAnimator speedAnim;
 
-    // Várias variáveis do MESMO tipo podem ser declaradas numa linha só, separadas por vírgula.
-    private TextView txtSpeed, txtImpact, txtRotation, txtSignals, txtStatus;
+    private TextView txtSpeed, txtImpact, txtRotation, txtStatus;
+    private TextView sigImpact, sigDrop, sigRotation, sigStill;
     private LinearProgressIndicator barImpact, barRotation;
 
     /**
-     * O "relógio" da simulação, a cada 250 ms entrega uma leitura.
-     *
-     * CLASSE ANÔNIMA: "new Runnable() { ... }" cria, ali mesmo, um objeto de uma classe
-     * sem nome que implementa a interface Runnable (que só tem o método run()).
+     * O "relógio" da simulação: a cada 250 ms entrega uma leitura.
+     * CLASSE ANÔNIMA: "new Runnable() { ... }" cria ali mesmo um objeto que implementa Runnable.
      */
     private final Runnable ticker = new Runnable() {
         @Override
         public void run() {
-            // Acabaram as leituras do cenário? Volta para a pilotagem normal.
-            if (queue.isEmpty()) {
+            if (queue.isEmpty()) {   // acabou o cenário? volta para a pilotagem normal
                 queue.addAll(MockSensorSource.generate(Scenario.NORMAL_RIDE, nextTimestamp));
             }
-            SensorReading reading = queue.poll();   // tira a primeira da fila
+            SensorReading reading = queue.poll();
             nextTimestamp = reading.getTimestampMillis() + MockSensorSource.STEP_MILLIS;
-            source.push(reading);                   // entrega para os ouvintes (Observer)
-
-            // Agenda a si mesmo de novo, a não ser que um acidente tenha sido detectado.
+            source.push(reading);    // entrega para os ouvintes (Observer)
             if (!waitingForAlert) handler.postDelayed(this, TICK_MILLIS);
         }
     };
@@ -98,10 +98,13 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         txtSpeed = findViewById(R.id.txt_speed);
         txtImpact = findViewById(R.id.txt_impact);
         txtRotation = findViewById(R.id.txt_rotation);
-        txtSignals = findViewById(R.id.txt_signals);
         txtStatus = findViewById(R.id.txt_status);
         barImpact = findViewById(R.id.bar_impact);
         barRotation = findViewById(R.id.bar_rotation);
+        sigImpact = findViewById(R.id.sig_impact);
+        sigDrop = findViewById(R.id.sig_drop);
+        sigRotation = findViewById(R.id.sig_rotation);
+        sigStill = findViewById(R.id.sig_still);
 
         // Começa a viagem com o sensor SIMULADO. "this" = esta tela recebe os avisos da sessão.
         source = new MockSensorSource();
@@ -109,13 +112,19 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         session.setListener(this);
         session.start();
 
-        ((TextView) findViewById(R.id.txt_vehicle)).setText(session.getVehicle().getDisplayName());
+        // Etiqueta do veículo com o ícone na frente do nome.
+        TextView txtVehicle = findViewById(R.id.txt_vehicle);
+        txtVehicle.setText(VehicleUi.label(session.getVehicle().getType()));
+        txtVehicle.setCompoundDrawablesRelativeWithIntrinsicBounds(VehicleUi.icon(session.getVehicle().getType()), 0, 0, 0);
+
+        startLiveDot();
         buildScenarioChips();
 
-        findViewById(R.id.btn_end).setOnClickListener(v -> endTrip());
+        View btnEnd = findViewById(R.id.btn_end);
+        Press.attach(btnEnd);
+        btnEnd.setOnClickListener(v -> endTrip());
 
         // O botão "voltar" do celular também encerra (e salva) a viagem.
-        // Aqui a classe anônima estende uma CLASSE abstrata (OnBackPressedCallback), não uma interface.
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -124,15 +133,39 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         });
     }
 
-    /** Cria um botão ("chip") para cada cenário do simulador, menos a pilotagem normal. */
+    /** A bolinha verde "ao vivo" pisca devagar, sem parar. */
+    private void startLiveDot() {
+        ObjectAnimator blink = ObjectAnimator.ofFloat(findViewById(R.id.live_dot), View.ALPHA, 1f, 0.25f);
+        blink.setDuration(900);
+        blink.setRepeatMode(ValueAnimator.REVERSE);
+        blink.setRepeatCount(ValueAnimator.INFINITE);
+        blink.start();
+    }
+
+    /** Cria um botão ("chip") para cada cenário do simulador. O "Real crash" fica em laranja. */
     private void buildScenarioChips() {
         ChipGroup group = findViewById(R.id.group_scenarios);
-        // Scenario.values() devolve TODOS os valores do enum, em ordem.
+        float dp = getResources().getDisplayMetrics().density;
+        Typeface font = Typeface.create(getResources().getFont(R.font.funnel_sans), Typeface.BOLD);
+
         for (Scenario scenario : Scenario.values()) {
-            if (scenario == Scenario.NORMAL_RIDE) continue;   // "continue" pula para o próximo
+            if (scenario == Scenario.NORMAL_RIDE) continue;
+            boolean isCrash = scenario == Scenario.CRASH;
+
             Chip chip = new Chip(this);
             chip.setText(scenario.getLabel());
-            chip.setOnClickListener(v -> play(scenario));
+            chip.setTypeface(font);
+            chip.setTextColor(ContextCompat.getColor(this, R.color.white));
+            chip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, isCrash ? R.color.guard_alert_dark : R.color.navy_card)));
+            chip.setChipStrokeColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, isCrash ? R.color.guard_alert_dark : R.color.navy_line)));
+            chip.setChipStrokeWidth(1.5f * dp);
+            chip.setRippleColor(ColorStateList.valueOf(0x33FFFFFF));
+            chip.setOnClickListener(v -> {
+                Press.tick(v);
+                play(scenario);
+            });
             group.addView(chip);
         }
     }
@@ -142,7 +175,7 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         queue.clear();
         queue.addAll(MockSensorSource.generate(scenario, nextTimestamp));
         String expected = getString(scenario.shouldAlert() ? R.string.expected_countdown : R.string.expected_watching);
-        txtStatus.setText(getString(R.string.trip_status_simulating, scenario.getLabel(), expected));
+        txtStatus.setText(getString(R.string.trip_status_simulating, scenario.getLabel().toLowerCase(), expected));
     }
 
     // ---------- Avisos da TripSession (contrato TripSession.Listener) ----------
@@ -151,27 +184,55 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
     @Override
     public void onReading(SensorReading r) {
         Vehicle v = session.getVehicle();
-        txtSpeed.setText(getString(R.string.speed_value, r.getSpeedKmh()));
+        animateSpeed((float) r.getSpeedKmh());
         txtImpact.setText(getString(R.string.impact_value, r.getAccelerationG()));
         txtRotation.setText(getString(R.string.rotation_value, r.getRotationDegPerSec()));
 
         // Barra cheia = 2x o limite do veículo. Ou seja: o MEIO da barra é o limite.
-        barImpact.setProgress(percent(r.getAccelerationG(), v.getImpactThresholdG() * 2));
-        barRotation.setProgress(percent(r.getRotationDegPerSec(), v.getRotationThresholdDegPerSec() * 2));
+        // O "true" no fim anima a barra até o novo valor.
+        barImpact.setProgressCompat(percent(r.getAccelerationG(), v.getImpactThresholdG() * 2), true);
+        barRotation.setProgressCompat(percent(r.getRotationDegPerSec(), v.getRotationThresholdDegPerSec() * 2), true);
 
         Map<String, Boolean> s = session.activeSignals(r.getTimestampMillis());
-        txtSignals.setText(getString(R.string.signals,
-                dot(s.get(ImpactDetector.SIGNAL)), dot(s.get(DecelerationDetector.SIGNAL)),
-                dot(s.get(RolloverDetector.SIGNAL)), dot(s.get(StillnessDetector.SIGNAL))));
+        setSignal(sigImpact, s.get(ImpactDetector.SIGNAL));
+        setSignal(sigDrop, s.get(DecelerationDetector.SIGNAL));
+        setSignal(sigRotation, s.get(RolloverDetector.SIGNAL));
+        setSignal(sigStill, s.get(StillnessDetector.SIGNAL));
     }
 
-    /** Possível acidente: pausa a simulação e abre a tela "Are you OK?". */
+    /** Possível acidente: vibra, pausa a simulação e abre a tela "Are you OK?". */
     @Override
     public void onIncident(Incident incident) {
         waitingForAlert = true;
         handler.removeCallbacks(ticker);
-        // Não precisamos mandar dados pela Intent: a AlertActivity pega o incidente ativo na sessão.
+        Press.strong(txtSpeed);
+        // A AlertActivity pega o incidente ativo direto na sessão: não precisa mandar nada pela Intent.
         startActivity(new Intent(this, AlertActivity.class));
+    }
+
+    // ---------- Pequenas animações ----------
+
+    /** O número da velocidade "rola" até o novo valor em vez de pular. */
+    private void animateSpeed(float target) {
+        if (speedAnim != null) speedAnim.cancel();
+        speedAnim = ValueAnimator.ofFloat(shownSpeed, target);
+        speedAnim.setDuration(TICK_MILLIS);
+        speedAnim.addUpdateListener(a -> {
+            shownSpeed = (float) a.getAnimatedValue();
+            txtSpeed.setText(getString(R.string.speed_value, shownSpeed));
+        });
+        speedAnim.start();
+    }
+
+    /** Liga/desliga um sinal. Quando ele ACENDE, dá um pulinho para chamar atenção. */
+    private void setSignal(TextView chip, Boolean active) {
+        boolean on = Boolean.TRUE.equals(active);   // não quebra se vier null
+        if (on && !chip.isActivated()) {
+            chip.setScaleX(0.9f);
+            chip.setScaleY(0.9f);
+            chip.animate().scaleX(1f).scaleY(1f).setDuration(240).start();
+        }
+        chip.setActivated(on);   // o fundo e a cor mudam sozinhos (bg_signal.xml e color/signal_fg.xml)
     }
 
     // ---------- Ciclo de vida ----------
@@ -202,20 +263,11 @@ public class TripActivity extends AppCompatActivity implements TripSession.Liste
         Trip trip = app.endTrip();
         Toast.makeText(this, getString(R.string.trip_ended, trip.getMaxSpeedKmh(), trip.getIncidents().size()),
                 Toast.LENGTH_LONG).show();
-        finish();   // fecha esta tela
+        finish();
     }
-
-    // ---------- Pequenos ajudantes ----------
 
     /** Converte um valor numa porcentagem de 0 a 100 (para as barras). */
     private static int percent(double value, double max) {
-        // Math.round arredonda; (int) é um CAST de long para int; Math.min trava em 100.
         return (int) Math.min(100, Math.round(value / max * 100));
-    }
-
-    /** ● se o sinal está ligado, ○ se não. */
-    private static String dot(Boolean active) {
-        // Boolean.TRUE.equals(x) não quebra se x for null (diferente de x.equals(...)).
-        return Boolean.TRUE.equals(active) ? "●" : "○";
     }
 }

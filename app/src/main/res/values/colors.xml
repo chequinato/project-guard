@@ -1,21 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mesma paleta do site (docs/index.html) -->
+<!-- Paleta do Guard: as mesmas cores do site (docs/index.html). -->
 <resources>
+    <!-- Marca -->
     <color name="guard_blue">#104FB6</color>
+    <color name="guard_blue_pressed">#0C3E91</color>
     <color name="guard_blue_light">#7C9CEB</color>
-    <color name="guard_navy">#0A1440</color>
+    <color name="guard_ice">#DCE5F7</color>
+
+    <!-- Fundos e texto (telas claras) -->
+    <color name="guard_page">#E6EAF3</color>
     <color name="guard_ink">#0A1233</color>
     <color name="guard_muted">#58627F</color>
     <color name="guard_line">#D6DCEA</color>
-    <color name="guard_page">#E6EAF3</color>
-    <color name="guard_ice">#DCE5F7</color>
+
+    <!-- Modo viagem (tela escura) -->
+    <color name="guard_navy">#0A1440</color>
+    <color name="navy_card">#121E55</color>
+    <color name="navy_line">#1F2B66</color>
+    <color name="navy_muted">#97A3D6</color>
+    <color name="navy_bubble">#1B2970</color>
+    <color name="guard_live">#5BF0A8</color>
+
+    <!-- Alerta e confirmação -->
     <color name="guard_alert">#FF5A1F</color>
     <color name="guard_alert_dark">#DE3F0B</color>
     <color name="guard_alert_deep">#B83208</color>
     <color name="guard_ok">#12B067</color>
     <color name="guard_ok_dark">#0B7A47</color>
-    <color name="guard_live">#5BF0A8</color>
+
+    <!-- Avatares dos contatos (os mesmos três tons do site) -->
+    <color name="avatar_orange_bg">#FFE4D9</color>
+    <color name="avatar_green_bg">#D6F4E5</color>
+
     <color name="white">#FFFFFF</color>
+    <color name="white_80">#CCFFFFFF</color>
     <color name="white_60">#99FFFFFF</color>
     <color name="white_15">#26FFFFFF</color>
+    <color name="white_8">#14FFFFFF</color>
 </resources>
