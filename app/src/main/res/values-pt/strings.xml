@@ -102,6 +102,9 @@
     <string name="sms_reason_limit">o Android bloqueou por excesso de SMS.</string>
     <string name="sms_reason_not_sent">o celular não aceitou o envio (sem chip ou SMS bloqueado para o app).</string>
     <string name="sms_reason_code">código de erro %1$d.</string>
+    <string name="sms_reason_exception">o celular recusou (%1$s).</string>
+    <string name="send_via_sms_app">Enviar pelo app de mensagens</string>
+    <string name="no_sms_app">Nenhum app de mensagens encontrado neste celular.</string>
 
     <!-- Tela 4 · Contatos -->
     <string name="contacts_title">Quem devemos avisar?</string>

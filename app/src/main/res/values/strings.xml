@@ -113,6 +113,9 @@
     <string name="sms_reason_limit">Android blocked it for sending too many SMS.</string>
     <string name="sms_reason_not_sent">the phone didn\'t accept it (no SIM, or SMS blocked for the app).</string>
     <string name="sms_reason_code">error code %1$d.</string>
+    <string name="sms_reason_exception">the phone refused it (%1$s).</string>
+    <string name="send_via_sms_app">Send through the messaging app</string>
+    <string name="no_sms_app">No messaging app found on this phone.</string>
 
     <!-- Tela 4 · Contacts (ui/contacts/ContactsActivity) -->
     <string name="contacts_title">Who should we call?</string>

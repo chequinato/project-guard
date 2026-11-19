@@ -217,6 +217,24 @@
                     android:gravity="center_vertical"
                     android:textColor="@color/guard_muted"
                     android:textSize="13sp" />
+                <!-- Plano B: se o SMS automático falhar (ou estiver em modo demo), abre o app de
+                     mensagens do celular com o texto e o número prontos. Só aparece quando precisa. -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_sms_app"
+                    style="@style/Guard.Button.Ghost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:minHeight="48dp"
+                    android:text="@string/send_via_sms_app"
+                    android:textColor="@color/guard_blue"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_send"
+                    app:iconGravity="textStart"
+                    app:iconSize="18dp"
+                    app:iconTint="@color/guard_blue"
+                    app:strokeColor="@color/guard_blue" />
             </LinearLayout>
 
             <!-- Fila do escalonamento: quem já foi avisado, quem é o próximo (o Java preenche) -->

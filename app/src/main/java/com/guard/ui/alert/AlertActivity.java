@@ -1,10 +1,11 @@
 package com.guard.ui.alert;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
-import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,17 +13,19 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.VibrationEffect;
-import android.telephony.SmsManager;
 import android.os.Vibrator;
+import android.telephony.SmsManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -75,6 +78,8 @@ public class AlertActivity extends AppCompatActivity {
     private CircularProgressIndicator ring;
     private TextView txtSeconds, txtAlertTitle, txtAlertDetail, txtSmsStatus;
     private boolean realSms;             // true = SmsAlert (SMS de verdade); false = DemoAlert
+    private SmsAlert smsChannel;         // guardado para ler o motivo de um erro de envio
+    private View btnSmsApp;              // plano B: abrir o app de mensagens do celular
 
     /**
      * Escuta o aviso do Android "o SMS saiu ou falhou" (ver SmsAlert.ACTION_SENT).
@@ -93,6 +98,7 @@ public class AlertActivity extends AppCompatActivity {
                 // Mostra o MOTIVO que o Android devolveu, para dar para resolver na hora.
                 setStatus(getString(R.string.sms_failed, who, phone, failureReason(code)),
                         R.drawable.ic_alert, R.color.guard_alert_dark);
+                btnSmsApp.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -114,7 +120,8 @@ public class AlertActivity extends AppCompatActivity {
         // Tem permissão de SMS? (pedida na tela inicial, ao tocar em "Start trip")
         realSms = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
                 == PackageManager.PERMISSION_GRANTED;
-        AlertChannel channel = realSms ? new SmsAlert(this) : new DemoAlert();
+        smsChannel = realSms ? new SmsAlert(this) : null;
+        AlertChannel channel = realSms ? smsChannel : new DemoAlert();
         // O texto do SMS vem do strings.xml, então sai no idioma do app. A lambda É o MessageTemplate.
         MessageTemplate template = (u, i) -> getString(R.string.sms_message, u.getName(),
                 getString(VehicleUi.label(u.getSelectedVehicle().getType())).toLowerCase(), i.getMapLink());
@@ -135,6 +142,9 @@ public class AlertActivity extends AppCompatActivity {
         txtAlertDetail = findViewById(R.id.txt_alert_detail);
         listQueue = findViewById(R.id.list_queue);
         txtSmsStatus = findViewById(R.id.txt_sms_status);
+        btnSmsApp = findViewById(R.id.btn_sms_app);
+        Press.attach(btnSmsApp);
+        btnSmsApp.setOnClickListener(v -> openSmsApp());
         ((TextView) findViewById(R.id.txt_channel)).setText(realSms ? R.string.channel_sms : R.string.channel_demo);
 
         TextView txtWho = findViewById(R.id.txt_who);
@@ -250,6 +260,8 @@ public class AlertActivity extends AppCompatActivity {
 
     /** Linha de status do envio, embaixo da prévia da mensagem. */
     private void showSendStatus(EmergencyContact current) {
+        // O plano B começa escondido; aparece no modo demo ou se o envio falhar.
+        btnSmsApp.setVisibility(realSms && alertService.wasLastSendOk() ? View.GONE : View.VISIBLE);
         if (!realSms) {
             setStatus(getString(R.string.sms_demo_status), R.drawable.ic_shield, R.color.guard_muted);
         } else if (alertService.wasLastSendOk()) {
@@ -258,8 +270,30 @@ public class AlertActivity extends AppCompatActivity {
                     R.drawable.ic_send, R.color.guard_muted);
         } else {
             // O envio nem saiu do celular (sem chip, SMS bloqueado para o app...).
+            String detail = smsChannel.getLastError();
+            String reason = detail == null ? getString(R.string.sms_reason_not_sent)
+                    : getString(R.string.sms_reason_exception, detail);
             setStatus(getString(R.string.sms_failed, current.getName(), BrazilianPhone.format(current.getPhone()),
-                    getString(R.string.sms_reason_not_sent)), R.drawable.ic_alert, R.color.guard_alert_dark);
+                    reason), R.drawable.ic_alert, R.color.guard_alert_dark);
+        }
+    }
+
+    /**
+     * Plano B: abre o app de SMS do celular com o número e o texto já preenchidos.
+     * "smsto:" é o endereço que todo app de mensagens entende; "sms_body" é o texto.
+     * A pessoa só toca em enviar. (Útil na apresentação se o chip recusar o envio automático.)
+     */
+    private void openSmsApp() {
+        EmergencyContact current = alertService.getCurrentContact();
+        if (current == null) return;
+        String to = BrazilianPhone.isValid(current.getPhone())
+                ? BrazilianPhone.normalize(current.getPhone()) : current.getPhone();
+        Intent sms = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + to))
+                .putExtra("sms_body", alertService.getMessage());
+        try {
+            startActivity(sms);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.no_sms_app, Toast.LENGTH_SHORT).show();
         }
     }
 

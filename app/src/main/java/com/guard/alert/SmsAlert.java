@@ -7,6 +7,7 @@ import android.os.Build;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionManager;
 
+import com.guard.model.BrazilianPhone;
 import com.guard.model.EmergencyContact;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class SmsAlert implements AlertChannel {
 
     private final Context context;
     private int requestCode = 0;   // um número diferente por envio, para os avisos não se misturarem
+    private String lastError;      // motivo do último erro (null = sem erro), para mostrar na tela
 
     public SmsAlert(Context context) {
         // getApplicationContext(): guardamos o contexto do APP, não o da tela.
@@ -44,6 +46,12 @@ public class SmsAlert implements AlertChannel {
 
     @Override
     public boolean send(EmergencyContact contact, String message) {
+        lastError = null;
+        // Sempre no formato internacional (+5511912345678): sem o +55 várias operadoras recusam.
+        // (Contatos antigos podem ter sido salvos como "11912345678".)
+        String to = BrazilianPhone.isValid(contact.getPhone())
+                ? BrazilianPhone.normalize(contact.getPhone())
+                : contact.getPhone();
         // TRY/CATCH: "tenta fazer; se der erro, trata aqui em vez de fechar o app".
         try {
             SmsManager sms = smsManager();
@@ -55,19 +63,25 @@ public class SmsAlert implements AlertChannel {
             Intent sent = new Intent(ACTION_SENT)
                     .setPackage(context.getPackageName())
                     .putExtra(EXTRA_CONTACT, contact.getName())
-                    .putExtra(EXTRA_PHONE, contact.getPhone());
+                    .putExtra(EXTRA_PHONE, to);
             PendingIntent onSent = PendingIntent.getBroadcast(context, requestCode++, sent,
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             // Um aviso por parte da mensagem (a lista precisa ter o mesmo tamanho de "parts").
             ArrayList<PendingIntent> sentIntents = new ArrayList<>();
             for (int i = 0; i < parts.size(); i++) sentIntents.add(onSent);
 
-            sms.sendMultipartTextMessage(contact.getPhone(), null, parts, sentIntents, null);
+            sms.sendMultipartTextMessage(to, null, parts, sentIntents, null);
             return true;
         } catch (RuntimeException e) {
-            // Sem permissão, sem chip, número inválido... avisamos que falhou.
+            // Sem permissão, sem chip, número inválido... guardamos o motivo e avisamos que falhou.
+            lastError = e.getClass().getSimpleName() + (e.getMessage() == null ? "" : ": " + e.getMessage());
             return false;
         }
+    }
+
+    /** Motivo técnico do último erro de envio (null se o último envio saiu). */
+    public String getLastError() {
+        return lastError;
     }
 
     /**
