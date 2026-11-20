@@ -32,6 +32,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        // Nome de quem usa o app (vai no SMS: "<nome> pode ter sofrido um acidente").
+        // Também dá para mudar no app, na tela de contatos. Vazio = "Um usuário do Guard".
+        buildConfigField("String", "USER_NAME", "\"${local("guard.user.name", "")}\"")
         // Contatos que o app já cadastra na primeira abertura (GuardDatabaseHelper.seedDemoContacts).
         // buildConfigField cria uma constante na classe BuildConfig: BuildConfig.CONTACT1_PHONE etc.
         // Sem local.properties, usamos números INVÁLIDOS (DDD 00) para nenhum estranho receber SMS.

@@ -51,7 +51,10 @@ public class GuardApplication extends Application {
 
     /** Monta o User atual a partir do que está salvo (nome, veículo e contatos). */
     public User loadUser() {
-        User user = new User(settings.getUserName(), Vehicle.of(settings.getVehicleType()));
+        // Sem nome cadastrado, usamos um genérico ("Um usuário do Guard"), no idioma do app.
+        String name = settings.getUserName().trim();
+        if (name.isEmpty()) name = getString(R.string.default_user_name);
+        User user = new User(name, Vehicle.of(settings.getVehicleType()));
         for (EmergencyContact c : contactDao.findAllByPriority()) {
             user.addContact(c);
         }

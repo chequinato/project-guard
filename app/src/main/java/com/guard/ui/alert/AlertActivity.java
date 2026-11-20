@@ -18,7 +18,9 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -42,6 +44,7 @@ import com.guard.alert.SmsAlert;
 import com.guard.model.BrazilianPhone;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
+import com.guard.model.IncidentStatus;
 import com.guard.model.User;
 import com.guard.session.TripSession;
 import com.guard.ui.common.Press;
@@ -80,6 +83,27 @@ public class AlertActivity extends AppCompatActivity {
     private boolean realSms;             // true = SmsAlert (SMS de verdade); false = DemoAlert
     private SmsAlert smsChannel;         // guardado para ler o motivo de um erro de envio
     private View btnSmsApp;              // plano B: abrir o app de mensagens do celular
+    private boolean listeningReplies;    // true = estamos lendo os SMS que chegam (respostas)
+
+    /**
+     * Escuta os SMS que CHEGAM no celular enquanto o alerta está na tela.
+     * Se o remetente é um contato que já foi avisado, isso é a resposta dele:
+     * quem confirma é o CONTATO, não a pessoa que sofreu o acidente.
+     */
+    private final BroadcastReceiver smsReply = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Só vale depois que o alerta foi enviado (e antes de terminar).
+            if (incident.getStatus() != IncidentStatus.ALERT_SENT) return;
+            // Um SMS comprido chega em pedaços: juntamos o texto de todos.
+            SmsMessage[] parts = Telephony.Sms.Intents.getMessagesFromIntent(intent);
+            if (parts == null || parts.length == 0) return;
+            StringBuilder text = new StringBuilder();
+            for (SmsMessage part : parts) text.append(part.getMessageBody());
+            EmergencyContact who = alertService.findAlertedContact(parts[0].getOriginatingAddress());
+            if (who != null) contactReplied(who, text.toString().trim());
+        }
+    };
 
     /**
      * Escuta o aviso do Android "o SMS saiu ou falhou" (ver SmsAlert.ACTION_SENT).
@@ -131,6 +155,16 @@ public class AlertActivity extends AppCompatActivity {
             ContextCompat.registerReceiver(this, smsResult, new IntentFilter(SmsAlert.ACTION_SENT),
                     ContextCompat.RECEIVER_NOT_EXPORTED);
         }
+        // Escutar as RESPOSTAS: precisa da permissão de receber SMS (pedida junto com as outras).
+        listeningReplies = realSms && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+                == PackageManager.PERMISSION_GRANTED;
+        if (listeningReplies) {
+            // SMS_RECEIVED vem do sistema. Exigir BROADCAST_SMS de quem envia garante que é
+            // o Android de verdade (nenhum outro app consegue fingir que chegou um SMS).
+            ContextCompat.registerReceiver(this, smsReply,
+                    new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION),
+                    Manifest.permission.BROADCAST_SMS, null, ContextCompat.RECEIVER_EXPORTED);
+        }
         vibrator = getSystemService(Vibrator.class);
 
         panelCount = findViewById(R.id.panel_count);
@@ -156,12 +190,16 @@ public class AlertActivity extends AppCompatActivity {
 
         View btnOk = findViewById(R.id.btn_ok);
         View btnCancel = findViewById(R.id.btn_cancel_alert);
-        View btnConfirmed = findViewById(R.id.btn_confirmed);
+        TextView btnSimulate = findViewById(R.id.btn_confirmed);
         View btnBack = findViewById(R.id.btn_back);
-        Press.attach(btnOk, btnCancel, btnConfirmed, btnBack);
+        Press.attach(btnOk, btnCancel, btnSimulate, btnBack);
         btnOk.setOnClickListener(v -> userIsOk());
         btnCancel.setOnClickListener(v -> userIsOk());
-        btnConfirmed.setOnClickListener(v -> contactConfirmed());
+        // Com SMS de verdade, a confirmação vem da RESPOSTA do contato (smsReply): não há botão.
+        // Sem SMS (modo demonstração), deixamos um botão para SIMULAR a resposta na apresentação.
+        btnSimulate.setVisibility(listeningReplies ? View.GONE : View.VISIBLE);
+        btnSimulate.setText(R.string.simulate_reply);
+        btnSimulate.setOnClickListener(v -> simulateReply());
         btnBack.setOnClickListener(v -> finish());
 
         vibrate(new long[]{0, 400, 200, 400});   // alarme: duas vibrações longas
@@ -353,13 +391,21 @@ public class AlertActivity extends AppCompatActivity {
         }
     }
 
-    /** Simula a resposta do contato ("estou indo"). */
-    private void contactConfirmed() {
+    /** Modo demonstração: finge que o contato atual respondeu (sem texto). */
+    private void simulateReply() {
+        contactReplied(alertService.getCurrentContact(), "");
+    }
+
+    /** O contato respondeu: mostra quem foi e o que ele escreveu. */
+    private void contactReplied(EmergencyContact who, String reply) {
         cancelTimers();
-        EmergencyContact who = alertService.getCurrentContact();
-        alertService.confirm();
-        showEnd(EndStyle.HELP_COMING, getString(R.string.help_coming), getString(R.string.contact_on_way, who.getName()),
-                getString(R.string.location_updating, who.getName()));
+        alertService.confirmBy(who);
+        vibrate(new long[]{0, 80, 60, 80, 60, 200});   // vibração "boa notícia"
+        String text = reply.isEmpty()
+                ? getString(R.string.location_updating, who.getName())
+                : getString(R.string.contact_replied_text, reply, who.getName());
+        showEnd(EndStyle.HELP_COMING, getString(R.string.help_coming),
+                getString(R.string.contact_replied_title, who.getName()), text);
     }
 
     // ========== Etapa 3: fim ==========
@@ -458,7 +504,8 @@ public class AlertActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         cancelTimers();
-        if (realSms) unregisterReceiver(smsResult);   // parar de escutar quando a tela fecha
+        if (realSms) unregisterReceiver(smsResult);          // parar de escutar quando a tela fecha
+        if (listeningReplies) unregisterReceiver(smsReply);
         super.onDestroy();
     }
 }

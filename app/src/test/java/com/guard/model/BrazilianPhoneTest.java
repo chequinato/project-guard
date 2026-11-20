@@ -1,7 +1,9 @@
 package com.guard.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -42,5 +44,14 @@ public class BrazilianPhoneTest {
     @Test(expected = IllegalArgumentException.class)
     public void normalizeRefusesInvalidNumbers() {
         BrazilianPhone.normalize("12345");
+    }
+
+    @Test
+    public void comparesTheSameNumberInDifferentFormats() {
+        assertTrue(BrazilianPhone.sameNumber("+5511939411585", "11939411585"));
+        assertTrue(BrazilianPhone.sameNumber("+5511939411585", "011 93941-1585"));
+        assertFalse(BrazilianPhone.sameNumber("+5511939411585", "+5511944445612"));
+        assertFalse(BrazilianPhone.sameNumber("+5511939411585", "1585"));   // curto demais
+        assertFalse(BrazilianPhone.sameNumber(null, "11939411585"));
     }
 }

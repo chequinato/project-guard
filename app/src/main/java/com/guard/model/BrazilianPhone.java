@@ -115,4 +115,18 @@ public final class BrazilianPhone {
         String n = normalize(phone).substring(3);   // tira o "+55"
         return "(" + n.substring(0, 2) + ") " + n.substring(2, 7) + "-" + n.substring(7);
     }
+
+    /**
+     * Os dois textos são o MESMO telefone? Usado para reconhecer quem respondeu o SMS.
+     * A operadora pode entregar o remetente como "+5511912345678", "11912345678" ou "011912345678",
+     * então comparamos só os últimos 11 dígitos (DDD + celular).
+     */
+    public static boolean sameNumber(String a, String b) {
+        if (a == null || b == null) return false;
+        String da = a.replaceAll("[^0-9]", "");
+        String db = b.replaceAll("[^0-9]", "");
+        if (da.length() < 8 || db.length() < 8) return false;   // curto demais para ser telefone
+        int n = Math.min(11, Math.min(da.length(), db.length()));
+        return da.substring(da.length() - n).equals(db.substring(db.length() - n));
+    }
 }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.guard.GuardApplication;
 import com.guard.R;
 import com.guard.data.ContactDao;
+import com.guard.data.SettingsStore;
 import com.google.android.material.textfield.TextInputLayout;
 import com.guard.model.BrazilianPhone;
 import com.guard.model.EmergencyContact;
@@ -48,6 +49,18 @@ public class ContactsActivity extends AppCompatActivity {
         layoutPhone = findViewById(R.id.layout_phone);
         clearErrorOnType(inputName, layoutName);
         clearErrorOnType(inputPhone, layoutPhone);
+
+        // Seu nome (vai no SMS). Começa com o que está salvo e salva a cada letra digitada.
+        SettingsStore settings = ((GuardApplication) getApplication()).getSettings();
+        EditText inputUserName = findViewById(R.id.input_user_name);
+        inputUserName.setText(settings.getUserName());
+        inputUserName.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override public void afterTextChanged(Editable s) {
+                settings.setUserName(s.toString().trim());
+            }
+        });
 
         View btnBack = findViewById(R.id.btn_back);
         View btnAdd = findViewById(R.id.btn_add);

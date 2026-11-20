@@ -34,13 +34,13 @@
     <string name="limit_drop_value">%1$.0f km/h</string>
     <string name="limit_rotation_value">%1$.0f°/s</string>
     <string name="limit_impact_label">impact</string>
-    <string name="limit_drop_label">speed drop in 2 s</string>
+    <string name="limit_drop_label">drop in 2 s</string>
     <string name="limit_rotation_label">rotation</string>
     <string name="alert_order">Who gets alerted</string>
     <string name="edit">Edit</string>
     <string name="no_contacts">No emergency contacts yet. Add at least one before your trip.</string>
     <string name="start_trip">Start trip</string>
-    <string name="sms_denied">Without the SMS and Phone permissions, alerts run in demo mode (no real message).</string>
+    <string name="sms_denied">Without the SMS and Phone permissions, alerts run in demo mode (no real message and no reply detection).</string>
 
     <!-- Tela 2 · Trip mode (ui/trip/TripActivity) -->
     <string name="monitoring">Monitoring</string>
@@ -99,14 +99,17 @@
     <string name="concept_disclaimer">Guard is a concept project. In a real emergency in Brazil, call 192 (SAMU).</string>
     <string name="no_contacts_title">Nobody to alert</string>
     <string name="no_contacts_text">Add emergency contacts before your next trip.</string>
+    <string name="simulate_reply">Simulate a contact reply (demo)</string>
+    <string name="contact_replied_title">%1$s replied</string>
+    <string name="contact_replied_text">“%1$s”\n\nYour location keeps updating for %2$s.</string>
     <string name="back_to_trip">Back to trip</string>
     <!-- SMS de verdade. %1$s = nome do usuário, %2$s = veículo, %3$s = link do mapa -->
-    <string name="sms_message">GUARD ALERT (test, Guard student project): %1$s may have been in an accident (%2$s). Location: %3$s</string>
+    <string name="sms_message">GUARD ALERT (test, Guard student project): %1$s may have been in an accident (%2$s). Location: %3$s Reply to this SMS so Guard knows you saw it.</string>
     <string name="channel_sms">Guard · SMS</string>
     <string name="channel_demo">Guard · demo</string>
     <string name="sms_demo_status">Demo mode: no real SMS was sent.</string>
     <string name="sms_sending">Sending SMS to %1$s (%2$s)…</string>
-    <string name="sms_sent">SMS sent to %1$s</string>
+    <string name="sms_sent">SMS sent to %1$s. Waiting for a reply.</string>
     <string name="sms_failed">SMS to %1$s (%2$s) failed: %3$s</string>
     <string name="sms_reason_generic">the carrier refused it. Check the number, the SMS plan and which SIM is the default for SMS.</string>
     <string name="sms_reason_radio_off">the phone radio is off (airplane mode?).</string>
@@ -122,6 +125,9 @@
     <!-- Tela 4 · Contacts (ui/contacts/ContactsActivity) -->
     <string name="contacts_title">Who should we call?</string>
     <string name="contacts_hint">Priority 1 hears first. Tap × to remove someone.</string>
+    <string name="your_name">Your name</string>
+    <string name="your_name_helper">It goes in the alert SMS your contacts receive.</string>
+    <string name="default_user_name">A Guard user</string>
     <string name="new_contact">New contact</string>
     <string name="name">Name</string>
     <string name="phone">Phone</string>

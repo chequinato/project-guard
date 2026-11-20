@@ -1,5 +1,6 @@
 package com.guard.alert;
 
+import com.guard.model.BrazilianPhone;
 import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.User;
@@ -13,7 +14,7 @@ import java.util.List;
  *   1. start()    -> manda para o contato de prioridade 1
  *   2. ninguém respondeu a tempo -> quem controla o relógio (a tela) chama escalate()
  *   3. escalate() -> manda para o próximo da lista
- *   4. confirm()  -> um contato respondeu: o incidente fica CONFIRMED_BY_CONTACT
+ *   4. confirmBy() -> um contato RESPONDEU o SMS (a tela reconhece pelo número): CONFIRMED_BY_CONTACT
  *
  * Decisão de projeto: o AlertService NÃO tem relógio próprio.
  * Assim os testes chamam escalate() na hora, sem esperar 1 minuto de verdade.
@@ -36,6 +37,7 @@ public class AlertService {
     private List<EmergencyContact> queue;   // contatos em ordem de prioridade
     private int currentIndex = -1;          // -1 = ainda não começou
     private boolean lastSendOk;             // o último envio saiu? (o canal devolve true/false)
+    private EmergencyContact confirmedBy;   // quem respondeu (null = ninguém ainda)
 
     /** Usa o texto padrão em inglês (buildMessage). Prático para os testes. */
     public AlertService(AlertChannel channel) {
@@ -80,9 +82,35 @@ public class AlertService {
         return false;
     }
 
-    /** Algum contato respondeu "estou indo". */
+    /** Algum contato respondeu (versão sem saber quem: usada pelo botão "simular" do modo demo). */
     public void confirm() {
+        confirmBy(getCurrentContact());
+    }
+
+    /** O contato respondeu: o incidente fica CONFIRMED_BY_CONTACT e guardamos quem foi. */
+    public void confirmBy(EmergencyContact contact) {
+        this.confirmedBy = contact;
         incident.markConfirmedByContact();
+    }
+
+    /** Quem respondeu (null se ninguém respondeu). */
+    public EmergencyContact getConfirmedBy() {
+        return confirmedBy;
+    }
+
+    /**
+     * Chegou um SMS deste número: é de alguém que JÁ FOI AVISADO?
+     * Só vale para quem recebeu o alerta (posições 0 até a atual da fila); um SMS qualquer
+     * de outra pessoa, ou de um contato que ainda nem foi avisado, não conta como resposta.
+     *
+     * @return o contato que respondeu, ou null se o número não é de nenhum avisado.
+     */
+    public EmergencyContact findAlertedContact(String phone) {
+        if (queue == null) return null;
+        for (int i = 0; i <= currentIndex && i < queue.size(); i++) {
+            if (BrazilianPhone.sameNumber(queue.get(i).getPhone(), phone)) return queue.get(i);
+        }
+        return null;
     }
 
     /** Quem foi avisado por último (null se ainda não começou). */

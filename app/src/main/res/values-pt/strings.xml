@@ -24,13 +24,13 @@
     <string name="limit_drop_value">%1$.0f km/h</string>
     <string name="limit_rotation_value">%1$.0f°/s</string>
     <string name="limit_impact_label">impacto</string>
-    <string name="limit_drop_label">queda de velocidade em 2 s</string>
+    <string name="limit_drop_label">queda em 2 s</string>
     <string name="limit_rotation_label">rotação</string>
     <string name="alert_order">Quem será avisado</string>
     <string name="edit">Editar</string>
     <string name="no_contacts">Nenhum contato de emergência ainda. Cadastre pelo menos um antes da viagem.</string>
     <string name="start_trip">Iniciar viagem</string>
-    <string name="sms_denied">Sem as permissões de SMS e Telefone, os alertas rodam em modo demonstração (sem mensagem de verdade).</string>
+    <string name="sms_denied">Sem as permissões de SMS e Telefone, os alertas rodam em modo demonstração (sem mensagem de verdade e sem ler a resposta).</string>
 
     <!-- Tela 2 · Modo viagem -->
     <string name="monitoring">Monitorando</string>
@@ -89,13 +89,16 @@
     <string name="concept_disclaimer">O Guard é um projeto conceito. Em uma emergência real no Brasil, ligue 192 (SAMU).</string>
     <string name="no_contacts_title">Ninguém para avisar</string>
     <string name="no_contacts_text">Cadastre contatos de emergência antes da próxima viagem.</string>
+    <string name="simulate_reply">Simular resposta do contato (demo)</string>
+    <string name="contact_replied_title">%1$s respondeu</string>
+    <string name="contact_replied_text">“%1$s”\n\nSua localização continua sendo atualizada para %2$s.</string>
     <string name="back_to_trip">Voltar para a viagem</string>
-    <string name="sms_message">ALERTA GUARD (teste, projeto acadêmico Guard): %1$s pode ter sofrido um acidente (%2$s). Localização: %3$s</string>
+    <string name="sms_message">ALERTA GUARD (teste, projeto acadêmico Guard): %1$s pode ter sofrido um acidente (%2$s). Localização: %3$s Responda este SMS para o Guard saber que você viu.</string>
     <string name="channel_sms">Guard · SMS</string>
     <string name="channel_demo">Guard · demonstração</string>
     <string name="sms_demo_status">Modo demonstração: nenhum SMS de verdade foi enviado.</string>
     <string name="sms_sending">Enviando SMS para %1$s (%2$s)…</string>
-    <string name="sms_sent">SMS enviado para %1$s</string>
+    <string name="sms_sent">SMS enviado para %1$s. Aguardando resposta.</string>
     <string name="sms_failed">O SMS para %1$s (%2$s) falhou: %3$s</string>
     <string name="sms_reason_generic">a operadora recusou. Confira o número, se o chip tem plano de SMS e qual chip é o padrão para SMS.</string>
     <string name="sms_reason_radio_off">o rádio do celular está desligado (modo avião?).</string>
@@ -111,6 +114,9 @@
     <!-- Tela 4 · Contatos -->
     <string name="contacts_title">Quem devemos avisar?</string>
     <string name="contacts_hint">A prioridade 1 é avisada primeiro. Toque no × para remover alguém.</string>
+    <string name="your_name">Seu nome</string>
+    <string name="your_name_helper">Vai na mensagem de alerta que seus contatos recebem.</string>
+    <string name="default_user_name">Um usuário do Guard</string>
     <string name="new_contact">Novo contato</string>
     <string name="name">Nome</string>
     <string name="phone">Telefone</string>

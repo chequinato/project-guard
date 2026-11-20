@@ -16,6 +16,9 @@
     <!-- "Telefone": vários celulares leem dados do chip durante o envio do SMS e recusam
          (SecurityException em getGroupIdLevel1) se o app não tiver esta permissão -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Ler os SMS que CHEGAM enquanto o alerta está na tela: é assim que o app percebe que o
+         contato respondeu (a confirmação vem dele, não de quem sofreu o acidente) -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <!-- Vibrar durante a contagem regressiva -->
     <uses-permission android:name="android.permission.VIBRATE" />
 

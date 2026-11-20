@@ -2,6 +2,7 @@ package com.guard.alert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.guard.model.EmergencyContact;
@@ -91,5 +92,29 @@ public class AlertServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void templateIsRequired() {
         new AlertService(channel, null);
+    }
+
+    @Test
+    public void recognizesTheReplyOnlyFromAlertedContacts() {
+        service.start(user, incident);   // só a Ana foi avisada
+        // A operadora pode mandar o remetente em outro formato: ainda é a Ana.
+        assertEquals("Ana", service.findAlertedContact("+55 11 98888-0001").getName());
+        // O Dad ainda não foi avisado: um SMS dele não conta como resposta.
+        assertNull(service.findAlertedContact("11988880002"));
+        // Número de um estranho também não.
+        assertNull(service.findAlertedContact("+5521999990000"));
+
+        service.escalate();              // agora o Dad também foi avisado
+        assertEquals("Dad", service.findAlertedContact("011988880002").getName());
+    }
+
+    @Test
+    public void replyConfirmsTheIncidentAndRemembersWho() {
+        service.start(user, incident);
+        service.escalate();
+        EmergencyContact ana = service.findAlertedContact("11988880001");
+        service.confirmBy(ana);
+        assertEquals(IncidentStatus.CONFIRMED_BY_CONTACT, incident.getStatus());
+        assertEquals("Ana", service.getConfirmedBy().getName());
     }
 }

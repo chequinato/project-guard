@@ -30,9 +30,11 @@ Não precisa instalar banco de dados: o SQLite já vem no Android e o arquivo `g
 1. O app já abre com 3 contatos: **1º alguém do grupo**, **2º o professor** e um 3º só para mostrar o botão de excluir (número inválido, não recebe nada). Em **Edit** dá para adicionar ou remover.
 2. A bandeira no canto superior da tela inicial troca o app entre **inglês** e **português** (abre sempre em inglês; a escolha fica salva).
    Ao lado, a lua liga o **modo escuro** (o sol volta para o claro). A escolha também fica salva.
-3. Escolha o veículo e toque em **Start trip**. Na primeira vez o Android pede duas permissões: **SMS** e **Telefone** (sem a de Telefone, vários celulares dão `SecurityException` ao enviar). Permita as duas.
+3. Escolha o veículo e toque em **Start trip**. Na primeira vez o Android pede as permissões de **SMS** (enviar e receber) e **Telefone** (sem a de Telefone, vários celulares dão `SecurityException` ao enviar). Permita todas.
 4. Na tela escura, toque num cenário: `Real crash`, `Phone dropped`, `Hard brake`, `Speed bump`...
 5. No `Real crash` aparece **Are you OK?** com **15 s**. Deixe zerar para ver o alerta e o escalonamento (10 s por contato), ou toque **I'm OK**.
+   Quem confirma o socorro é o **contato**: quando ele **responde o SMS**, o app lê a resposta, reconhece o número e mostra "Fulano respondeu" com o texto dele. (Sem permissão de SMS, em modo demonstração, aparece um botão para simular a resposta.)
+   Dica: no celular de quem dirige, desligue os "recursos de chat" (RCS) do Google Mensagens; senão a resposta pode chegar pela internet e não como SMS.
 6. Depois toque em **End trip** e abra **History** para ver a viagem salva.
 
 ### SMS de verdade
@@ -50,6 +52,7 @@ guard.contact2.phone=+55119XXXXXXXX
 ```
 
   Depois: **Build → Rebuild Project** e rode de novo. Os contatos são criados na primeira abertura; se o app já estava instalado com os contatos antigos, a versão nova do banco recria a lista sozinha. Sem essas linhas, o app usa números inválidos (DDD 00), então ninguém de fora recebe mensagem.
+- O nome que vai no SMS ("Fulano pode ter sofrido um acidente") fica em **Edit › Seu nome** (ou `guard.user.name=` no `local.properties`).
 - Também dá para cadastrar os números direto no app, em **Edit**: o campo só aceita celular brasileiro válido (DDD que existe + 9 dígitos), digitado de qualquer jeito: `(11) 91234-5678`, `11912345678` ou `+55 11 91234-5678`.
 - Se o SMS falhar, a tela de alerta mostra o motivo que o Android devolveu (operadora recusou, sem sinal, modo avião...). Os mais comuns: número de demonstração (DDD 00), chip sem plano de SMS, celular com 2 chips sem um padrão para SMS e, em celulares Xiaomi, a permissão extra "Enviar SMS" em Configurações › Apps › Guard › Outras permissões.
 

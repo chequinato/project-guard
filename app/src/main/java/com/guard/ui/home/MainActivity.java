@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
      *   SEND_SMS         -> enviar a mensagem
      *   READ_PHONE_STATE -> "Telefone": vários celulares leem dados do chip ao enviar
      *                       (getGroupIdLevel1) e dão SecurityException sem ela.
+     *   RECEIVE_SMS      -> ler a RESPOSTA do contato, para o app saber que ele viu o alerta.
      *
      * registerForActivityResult: registramos ANTES (no momento em que a tela é criada)
      * o que fazer quando o usuário responder. A resposta chega na lambda: um Map
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final String[] SMS_PERMISSIONS = {
             Manifest.permission.SEND_SMS,
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECEIVE_SMS
     };
 
     private final ActivityResultLauncher<String[]> smsPermissions =

@@ -136,63 +136,97 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
-        <!-- Limites do veículo escolhido: valor (DM Mono) + o que significa -->
+        <!-- Limites do veículo escolhido: um cartão com 3 colunas IGUAIS separadas por linhas.
+             Cada texto ocupa só a largura da sua coluna (match_parent) e quebra linha ali dentro,
+             sem invadir a coluna do lado. baselineAligned="false": as colunas ficam alinhadas pelo topo. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_card"
+            android:baselineAligned="false"
             android:orientation="horizontal"
-            android:paddingHorizontal="4dp">
+            android:paddingVertical="12dp">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingHorizontal="6dp">
                 <TextView
                     android:id="@+id/txt_limit_impact"
                     style="@style/Guard.Data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.1"
+                    android:maxLines="2"
                     android:text="@string/limit_impact_label"
                     android:textColor="@color/guard_muted"
                     android:textSize="12sp" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.3"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/txt_limit_drop"
-                    style="@style/Guard.Data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/limit_drop_label"
-                    android:textColor="@color/guard_muted"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/guard_line" />
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingHorizontal="6dp">
+                <TextView
+                    android:id="@+id/txt_limit_drop"
+                    style="@style/Guard.Data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.1"
+                    android:maxLines="2"
+                    android:text="@string/limit_drop_label"
+                    android:textColor="@color/guard_muted"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/guard_line" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingHorizontal="6dp">
                 <TextView
                     android:id="@+id/txt_limit_rotation"
                     style="@style/Guard.Data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.1"
+                    android:maxLines="2"
                     android:text="@string/limit_rotation_label"
                     android:textColor="@color/guard_muted"
                     android:textSize="12sp" />

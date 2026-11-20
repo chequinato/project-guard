@@ -34,6 +34,23 @@
             android:layout_marginTop="6dp"
             android:text="@string/contacts_hint" />
 
+        <!-- Seu nome: é ele que vai no SMS ("<nome> pode ter sofrido um acidente").
+             Salva sozinho enquanto você digita (ContactsActivity). -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_user_name"
+            style="@style/Guard.Field"
+            android:layout_marginTop="18dp"
+            android:hint="@string/your_name"
+            app:helperText="@string/your_name_helper">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textPersonName|textCapWords"
+                android:maxLength="40" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <LinearLayout
             android:id="@+id/list_contacts"
             android:layout_width="match_parent"

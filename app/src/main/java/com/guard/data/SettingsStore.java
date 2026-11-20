@@ -3,6 +3,7 @@ package com.guard.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.guard.BuildConfig;
 import com.guard.model.vehicle.VehicleType;
 
 /**
@@ -25,9 +26,12 @@ public class SettingsStore {
         this.prefs = context.getSharedPreferences(FILE, Context.MODE_PRIVATE);
     }
 
-    /** Nome do usuário. O segundo parâmetro é o valor padrão, se ainda não houver nada salvo. */
+    /**
+     * Nome do usuário (vai no SMS). O segundo parâmetro é o valor padrão, se ainda não houver
+     * nada salvo: o que estiver no local.properties (guard.user.name), ou vazio.
+     */
     public String getUserName() {
-        return prefs.getString(KEY_USER_NAME, "Lucas");
+        return prefs.getString(KEY_USER_NAME, BuildConfig.USER_NAME);
     }
 
     public void setUserName(String name) {
