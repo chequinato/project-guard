@@ -171,6 +171,19 @@
                 android:textColor="@color/white_80"
                 android:textSize="15sp" />
 
+            <!-- Espera pela resposta do contato: esvazia em 15 s; vazia = vai para o próximo -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/bar_wait"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="1000"
+                android:progress="1000"
+                app:indicatorColor="@color/white"
+                app:trackColor="@color/white_15"
+                app:trackCornerRadius="3dp"
+                app:trackThickness="6dp" />
+
             <!-- Prévia do que o contato recebe: parece uma notificação de celular -->
             <LinearLayout
                 android:layout_width="match_parent"

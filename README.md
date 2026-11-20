@@ -33,7 +33,7 @@ Não precisa instalar banco de dados: o SQLite já vem no Android e o arquivo `g
 3. Escolha o veículo e toque em **Start trip**. Na primeira vez o Android pede as permissões de **SMS** (enviar e receber), **Telefone** (sem ela, vários celulares dão `SecurityException` ao enviar) e **Localização**. Permita todas.
    O link do mapa no SMS usa o **GPS de verdade** do celular: a tela de alerta liga o GPS assim que abre e mostra a precisão ("Localização ao vivo (±15 m)"). Com a localização desligada, o link usa a posição simulada e a tela avisa. (A velocidade e os sensores continuam simulados.)
 4. Na tela escura, toque num cenário: `Real crash`, `Phone dropped`, `Hard brake`, `Speed bump`...
-5. No `Real crash` aparece **Are you OK?** com **15 s**. Deixe zerar para ver o alerta e o escalonamento (10 s por contato), ou toque **I'm OK**.
+5. No `Real crash` aparece **Are you OK?** com **15 s**. Deixe zerar para ver o alerta e o escalonamento (15 s por contato: o SMS vai para UM contato, espera a resposta e só então passa para o próximo), ou toque **I'm OK**.
    Quem confirma o socorro é o **contato**: quando ele **responde o SMS**, o app lê a resposta, reconhece o número e mostra "Fulano respondeu" com o texto dele. (Sem permissão de SMS, em modo demonstração, aparece um botão para simular a resposta.)
    Dica: no celular de quem dirige, desligue os "recursos de chat" (RCS) do Google Mensagens; senão a resposta pode chegar pela internet e não como SMS.
 6. Depois toque em **End trip** e abra **History** para ver a viagem salva.

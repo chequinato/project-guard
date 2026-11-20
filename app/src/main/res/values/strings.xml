@@ -85,6 +85,8 @@
     <string name="alert_title">%1$s has your location</string>
     <string name="notif_header">Guard · now</string>
     <string name="alert_next">No reply in %1$d s? %2$s is next.</string>
+    <string name="alert_waiting">Waiting for %1$s to reply: %2$d s. Then %3$s gets the alert.</string>
+    <string name="alert_waiting_last">Waiting for %1$s to reply: %2$d s. Last contact on your list.</string>
     <string name="alert_last">Last contact on your list.</string>
     <string name="queue_sent">Alerted</string>
     <string name="queue_next">Next</string>

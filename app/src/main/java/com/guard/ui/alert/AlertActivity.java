@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.guard.GuardApplication;
 import com.guard.R;
 import com.guard.alert.AlertChannel;
@@ -67,8 +68,12 @@ import java.util.List;
  */
 public class AlertActivity extends AppCompatActivity {
 
-    /** Na demo o escalonamento espera 10 s (na versão real: AlertService.ESCALATION_TIMEOUT_MILLIS, 1 min). */
-    private static final long DEMO_ESCALATION_MILLIS = 10_000;
+    /**
+     * Quanto tempo esperamos a RESPOSTA de cada contato antes de mandar para o próximo.
+     * Na demo: 15 s (na versão real: AlertService.ESCALATION_TIMEOUT_MILLIS, 1 min).
+     * O SMS sai para UM contato por vez: 1º -> espera -> 2º -> espera -> ...
+     */
+    private static final long DEMO_ESCALATION_MILLIS = 15_000;
 
     private User user;
     private Incident incident;
@@ -81,6 +86,7 @@ public class AlertActivity extends AppCompatActivity {
     private View panelCount, panelAlert, panelEnd;
     private CircularProgressIndicator ring;
     private TextView txtSeconds, txtAlertTitle, txtAlertDetail, txtSmsStatus;
+    private LinearProgressIndicator barWait;   // barra da espera pela resposta do contato
     private boolean realSms;             // true = SmsAlert (SMS de verdade); false = DemoAlert
     private SmsAlert smsChannel;         // guardado para ler o motivo de um erro de envio
     private View btnSmsApp;              // plano B: abrir o app de mensagens do celular
@@ -178,6 +184,7 @@ public class AlertActivity extends AppCompatActivity {
         txtSeconds = findViewById(R.id.txt_seconds);
         txtAlertTitle = findViewById(R.id.txt_alert_title);
         txtAlertDetail = findViewById(R.id.txt_alert_detail);
+        barWait = findViewById(R.id.bar_wait);
         listQueue = findViewById(R.id.list_queue);
         txtSmsStatus = findViewById(R.id.txt_sms_status);
         txtLocation = findViewById(R.id.txt_location);
@@ -281,12 +288,19 @@ public class AlertActivity extends AppCompatActivity {
         showSendStatus(current);
 
         if (escalation != null) escalation.cancel();
-        escalation = new CountDownTimer(DEMO_ESCALATION_MILLIS, 1000) {
+        // Relógio da espera: a barra esvazia aos poucos e o texto conta os segundos.
+        escalation = new CountDownTimer(DEMO_ESCALATION_MILLIS, 100) {
+            private int lastSecond = -1;
+
             @Override
             public void onTick(long left) {
+                barWait.setProgress((int) (left * 1000 / DEMO_ESCALATION_MILLIS));
+                int seconds = (int) ((left + 999) / 1000);   // arredonda para cima: 14,2 s vira 15
+                if (seconds == lastSecond) return;           // texto só muda 1 vez por segundo
+                lastSecond = seconds;
                 txtAlertDetail.setText(next == null
-                        ? getString(R.string.alert_last)
-                        : getString(R.string.alert_next, (int) ((left + 999) / 1000), next.getName()));
+                        ? getString(R.string.alert_waiting_last, current.getName(), seconds)
+                        : getString(R.string.alert_waiting, current.getName(), seconds, next.getName()));
             }
 
             @Override
