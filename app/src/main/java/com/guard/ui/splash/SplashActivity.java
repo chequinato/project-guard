@@ -24,18 +24,19 @@ import com.guard.ui.home.MainActivity;
  * Tela 0 · Abertura animada do Guard (layout: activity_splash.xml).
  *
  * Linha do tempo (milissegundos):
- *      0 – 1040  o logo OFICIAL se monta: base do escudo sobe, os corpos sobem e as
+ *      0 – 1660  o logo OFICIAL se monta: base do escudo sobe, os corpos sobem e as
  *                três cabeças "pulam" uma de cada vez (animação em avd_guard_splash.xml)
- *    950 – 1550  um pulso de "radar" sai do logo
- *    900 – 1300  o nome "guard" sobe e aparece
- *   1150 – 1550  o slogan aparece
- *          2000  um círculo claro cresce a partir do logo e revela a tela inicial
+ *   1500 – 2300  um pulso de "radar" sai do logo
+ *   1450 – 2070  o nome "guard" sobe e aparece
+ *   1900 – 2550  o slogan aparece
+ *   2550 – 3400  pausa: a marca inteira fica na tela por quase 1 segundo
+ *          3400  um círculo claro cresce a partir do logo e revela a tela inicial
  *
  * Tocar em qualquer lugar pula direto para o final.
  */
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long REVEAL_AT_MILLIS = 2000;
+    private static final long REVEAL_AT_MILLIS = 3400;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private boolean leaving;   // evita começar a saída duas vezes (timer + toque)
@@ -66,18 +67,19 @@ public class SplashActivity extends AppCompatActivity {
                 PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f, 1.7f),
                 PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.8f, 1.7f),
                 PropertyValuesHolder.ofFloat(View.ALPHA, 0.8f, 0f));
-        pulseAnim.setDuration(600);
-        pulseAnim.setStartDelay(950);
+        pulseAnim.setDuration(800);
+        pulseAnim.setStartDelay(1500);
         pulseAnim.start();
 
         // 3) Nome "guard": começa 20 dp mais baixo e sobe enquanto aparece.
         brand.setTranslationY(20 * dp);
-        brand.animate().translationY(0f).alpha(1f).setStartDelay(900).setDuration(420)
+        brand.animate().translationY(0f).alpha(1f).setStartDelay(1450).setDuration(620)
                 .setInterpolator(new DecelerateInterpolator(1.6f)).start();
 
         // 4) Slogan aparece logo depois.
         slogan.setTranslationY(10 * dp);
-        slogan.animate().translationY(0f).alpha(1f).setStartDelay(1150).setDuration(400).start();
+        slogan.animate().translationY(0f).alpha(0.92f).setStartDelay(1900).setDuration(650)
+                .setInterpolator(new DecelerateInterpolator(1.4f)).start();
 
         // "this::revealApp" = method reference: "quando chegar a hora, chame revealApp()".
         handler.postDelayed(this::revealApp, REVEAL_AT_MILLIS);
@@ -102,7 +104,7 @@ public class SplashActivity extends AppCompatActivity {
         float radius = (float) Math.hypot(Math.max(cx, reveal.getWidth() - cx), Math.max(cy, reveal.getHeight() - cy));
 
         Animator anim = ViewAnimationUtils.createCircularReveal(reveal, cx, cy, 0f, radius);
-        anim.setDuration(420);
+        anim.setDuration(560);
         anim.setInterpolator(new DecelerateInterpolator());
         // AnimatorListenerAdapter: classe com todos os métodos vazios; sobrescrevemos só o que interessa.
         anim.addListener(new AnimatorListenerAdapter() {

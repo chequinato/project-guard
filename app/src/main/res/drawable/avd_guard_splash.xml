@@ -35,87 +35,87 @@
     <target android:name="base">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="translateY" android:valueFrom="140" android:valueTo="0" android:duration="420" android:startOffset="0" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="translateY" android:valueFrom="140" android:valueTo="0" android:duration="672" android:startOffset="0" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="base_path">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="300" android:startOffset="0" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
+                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="480" android:startOffset="0" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="body">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="translateY" android:valueFrom="110" android:valueTo="0" android:duration="440" android:startOffset="120" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="translateY" android:valueFrom="110" android:valueTo="0" android:duration="704" android:startOffset="192" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="body_path">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="300" android:startOffset="120" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
+                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="480" android:startOffset="192" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="body_r">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="translateY" android:valueFrom="110" android:valueTo="0" android:duration="440" android:startOffset="200" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="translateY" android:valueFrom="110" android:valueTo="0" android:duration="704" android:startOffset="320" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="body_r_path">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="300" android:startOffset="200" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
+                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="480" android:startOffset="320" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="head_c">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:duration="380" android:startOffset="480" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
-                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:duration="380" android:startOffset="480" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:duration="608" android:startOffset="768" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:duration="608" android:startOffset="768" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="head_c_path">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="120" android:startOffset="480" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
+                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="192" android:startOffset="768" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="head_l">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:duration="380" android:startOffset="580" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
-                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:duration="380" android:startOffset="580" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:duration="608" android:startOffset="928" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:duration="608" android:startOffset="928" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="head_l_path">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="120" android:startOffset="580" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
+                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="192" android:startOffset="928" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="head_r">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:duration="380" android:startOffset="660" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
-                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:duration="380" android:startOffset="660" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:duration="608" android:startOffset="1056" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:duration="608" android:startOffset="1056" android:valueType="floatType" android:interpolator="@android:interpolator/overshoot" />
             </set>
         </aapt:attr>
     </target>
     <target android:name="head_r_path">
         <aapt:attr name="android:animation">
             <set>
-                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="120" android:startOffset="660" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
+                <objectAnimator android:propertyName="fillAlpha" android:valueFrom="0" android:valueTo="1" android:duration="192" android:startOffset="1056" android:valueType="floatType" android:interpolator="@android:interpolator/linear" />
             </set>
         </aapt:attr>
     </target>
