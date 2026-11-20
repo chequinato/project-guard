@@ -92,12 +92,12 @@ public class AlertActivity extends AppCompatActivity {
             String phone = BrazilianPhone.format(intent.getStringExtra(SmsAlert.EXTRA_PHONE));
             int code = getResultCode();
             if (code == Activity.RESULT_OK) {
-                setStatus(getString(R.string.sms_sent, who), R.drawable.ic_check, R.color.guard_ok_dark);
+                setStatus(getString(R.string.sms_sent, who), R.drawable.ic_check, R.color.guard_ok_text);
                 Press.tick(txtSmsStatus);
             } else {
                 // Mostra o MOTIVO que o Android devolveu, para dar para resolver na hora.
                 setStatus(getString(R.string.sms_failed, who, phone, failureReason(code)),
-                        R.drawable.ic_alert, R.color.guard_alert_dark);
+                        R.drawable.ic_alert, R.color.guard_alert_text);
                 btnSmsApp.setVisibility(View.VISIBLE);
             }
         }
@@ -271,10 +271,17 @@ public class AlertActivity extends AppCompatActivity {
         } else {
             // O envio nem saiu do celular (sem chip, SMS bloqueado para o app...).
             String detail = smsChannel.getLastError();
-            String reason = detail == null ? getString(R.string.sms_reason_not_sent)
-                    : getString(R.string.sms_reason_exception, detail);
+            String reason;
+            if (detail == null) {
+                reason = getString(R.string.sms_reason_not_sent);
+            } else if (detail.startsWith("SecurityException")) {
+                // O Android barrou por permissão (normalmente a "Telefone"): dizemos onde liberar.
+                reason = getString(R.string.sms_reason_permission);
+            } else {
+                reason = getString(R.string.sms_reason_exception, detail);
+            }
             setStatus(getString(R.string.sms_failed, current.getName(), BrazilianPhone.format(current.getPhone()),
-                    reason), R.drawable.ic_alert, R.color.guard_alert_dark);
+                    reason), R.drawable.ic_alert, R.color.guard_alert_text);
         }
     }
 
@@ -370,16 +377,18 @@ public class AlertActivity extends AppCompatActivity {
      * Fica aqui dentro porque só esta tela usa.
      */
     private enum EndStyle {
-        HELP_COMING(R.color.guard_ok_dark, R.drawable.ic_check, R.color.guard_ok_dark),
-        SAFE(R.color.guard_page, R.drawable.ic_shield, R.color.guard_blue),
-        NEUTRAL(R.color.guard_page, R.drawable.ic_alert, R.color.guard_alert_dark);
+        //          fundo da tela          ícone               cor do ícone           círculo do ícone
+        HELP_COMING(R.color.guard_ok_dark, R.drawable.ic_check, R.color.guard_ok_dark, R.color.white),
+        SAFE(R.color.guard_page, R.drawable.ic_shield, R.color.guard_accent, R.color.guard_surface),
+        NEUTRAL(R.color.guard_page, R.drawable.ic_alert, R.color.guard_alert_text, R.color.guard_surface);
 
-        final int background, icon, iconColor;
+        final int background, icon, iconColor, circle;
 
-        EndStyle(int background, int icon, int iconColor) {
+        EndStyle(int background, int icon, int iconColor, int circle) {
             this.background = background;
             this.icon = icon;
             this.iconColor = iconColor;
+            this.circle = circle;
         }
     }
 
@@ -388,7 +397,8 @@ public class AlertActivity extends AppCompatActivity {
         View from = panelAlert.getVisibility() == View.VISIBLE ? panelAlert : panelCount;
         switchPanel(from, panelEnd);
 
-        boolean dark = style == EndStyle.HELP_COMING;
+        // "dark" = fundo escuro (verde do socorro, ou a página no modo escuro): texto e ícones claros.
+        boolean dark = style == EndStyle.HELP_COMING || !getResources().getBoolean(R.bool.guard_light_bars);
         int bg = ContextCompat.getColor(this, style.background);
         int fg = ContextCompat.getColor(this, dark ? R.color.white : R.color.guard_ink);
         findViewById(R.id.root).setBackgroundColor(bg);
@@ -404,6 +414,7 @@ public class AlertActivity extends AppCompatActivity {
         ImageView icon = findViewById(R.id.img_end);
         icon.setImageResource(style.icon);
         icon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, style.iconColor)));
+        icon.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, style.circle)));
         icon.setScaleX(0.4f);
         icon.setScaleY(0.4f);
         icon.animate().scaleX(1f).scaleY(1f).setStartDelay(120).setDuration(420)

@@ -9,6 +9,7 @@
     <string name="brand_wordmark">guard</string>
     <string name="slogan">A ajuda chega mesmo quando você não consegue pedir.</string>
     <string name="back">Voltar</string>
+    <string name="change_theme">Alternar modo claro ou escuro</string>
     <string name="change_language">Switch to English</string>
 
     <!-- Tela 1 · Nova viagem -->
@@ -29,7 +30,7 @@
     <string name="edit">Editar</string>
     <string name="no_contacts">Nenhum contato de emergência ainda. Cadastre pelo menos um antes da viagem.</string>
     <string name="start_trip">Iniciar viagem</string>
-    <string name="sms_denied">Sem permissão de SMS: os alertas vão rodar em modo demonstração (sem mensagem de verdade).</string>
+    <string name="sms_denied">Sem as permissões de SMS e Telefone, os alertas rodam em modo demonstração (sem mensagem de verdade).</string>
 
     <!-- Tela 2 · Modo viagem -->
     <string name="monitoring">Monitorando</string>
@@ -102,6 +103,7 @@
     <string name="sms_reason_limit">o Android bloqueou por excesso de SMS.</string>
     <string name="sms_reason_not_sent">o celular não aceitou o envio (sem chip ou SMS bloqueado para o app).</string>
     <string name="sms_reason_code">código de erro %1$d.</string>
+    <string name="sms_reason_permission">o Android bloqueou. Libere \"Telefone\" e \"SMS\" em Configurações › Apps › Guard › Permissões.</string>
     <string name="sms_reason_exception">o celular recusou (%1$s).</string>
     <string name="send_via_sms_app">Enviar pelo app de mensagens</string>
     <string name="no_sms_app">Nenhum app de mensagens encontrado neste celular.</string>

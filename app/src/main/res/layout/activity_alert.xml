@@ -227,14 +227,14 @@
                     android:layout_marginTop="12dp"
                     android:minHeight="48dp"
                     android:text="@string/send_via_sms_app"
-                    android:textColor="@color/guard_blue"
+                    android:textColor="@color/guard_accent"
                     android:textSize="15sp"
                     android:visibility="gone"
                     app:icon="@drawable/ic_send"
                     app:iconGravity="textStart"
                     app:iconSize="18dp"
-                    app:iconTint="@color/guard_blue"
-                    app:strokeColor="@color/guard_blue" />
+                    app:iconTint="@color/guard_accent"
+                    app:strokeColor="@color/guard_accent" />
             </LinearLayout>
 
             <!-- Fila do escalonamento: quem já foi avisado, quem é o próximo (o Java preenche) -->

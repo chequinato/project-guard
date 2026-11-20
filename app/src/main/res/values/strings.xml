@@ -19,6 +19,7 @@
     <string name="brand_wordmark">guard</string>
     <string name="slogan">Help arrives even when you can\'t ask for it.</string>
     <string name="back">Back</string>
+    <string name="change_theme">Switch light or dark mode</string>
     <string name="change_language">Mudar para português</string>
 
     <!-- Tela 1 · New trip (ui/home/MainActivity) -->
@@ -39,7 +40,7 @@
     <string name="edit">Edit</string>
     <string name="no_contacts">No emergency contacts yet. Add at least one before your trip.</string>
     <string name="start_trip">Start trip</string>
-    <string name="sms_denied">No SMS permission: alerts will run in demo mode (no real message).</string>
+    <string name="sms_denied">Without the SMS and Phone permissions, alerts run in demo mode (no real message).</string>
 
     <!-- Tela 2 · Trip mode (ui/trip/TripActivity) -->
     <string name="monitoring">Monitoring</string>
@@ -113,6 +114,7 @@
     <string name="sms_reason_limit">Android blocked it for sending too many SMS.</string>
     <string name="sms_reason_not_sent">the phone didn\'t accept it (no SIM, or SMS blocked for the app).</string>
     <string name="sms_reason_code">error code %1$d.</string>
+    <string name="sms_reason_permission">Android blocked it. Allow \"Phone\" and \"SMS\" in Settings › Apps › Guard › Permissions.</string>
     <string name="sms_reason_exception">the phone refused it (%1$s).</string>
     <string name="send_via_sms_app">Send through the messaging app</string>
     <string name="no_sms_app">No messaging app found on this phone.</string>

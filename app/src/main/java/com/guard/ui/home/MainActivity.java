@@ -24,6 +24,7 @@ import com.guard.model.vehicle.VehicleType;
 import com.guard.ui.common.ContactViews;
 import com.guard.ui.common.Language;
 import com.guard.ui.common.Press;
+import com.guard.ui.common.ThemeMode;
 import com.guard.ui.common.VehicleUi;
 import com.guard.ui.contacts.ContactsActivity;
 import com.guard.ui.history.HistoryActivity;
@@ -49,15 +50,26 @@ public class MainActivity extends AppCompatActivity {
     private User user;
 
     /**
-     * Pedido da permissão de SMS (Android 6+ pergunta na hora, num pop-up do sistema).
+     * Permissões para o SMS de verdade (Android 6+ pergunta na hora, num pop-up do sistema):
+     *   SEND_SMS         -> enviar a mensagem
+     *   READ_PHONE_STATE -> "Telefone": vários celulares leem dados do chip ao enviar
+     *                       (getGroupIdLevel1) e dão SecurityException sem ela.
      *
      * registerForActivityResult: registramos ANTES (no momento em que a tela é criada)
-     * o que fazer quando o usuário responder. A resposta chega na lambda: true = permitiu.
-     * Permitindo ou não, a viagem começa: sem permissão o alerta roda em modo demonstração.
+     * o que fazer quando o usuário responder. A resposta chega na lambda: um Map
+     * "permissão -> permitiu?". Permitindo ou não, a viagem começa: sem SMS, o alerta
+     * roda em modo demonstração.
      */
-    private final ActivityResultLauncher<String> smsPermission =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
-                if (!granted) Toast.makeText(this, R.string.sms_denied, Toast.LENGTH_LONG).show();
+    private static final String[] SMS_PERMISSIONS = {
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.READ_PHONE_STATE
+    };
+
+    private final ActivityResultLauncher<String[]> smsPermissions =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                if (!hasAll(SMS_PERMISSIONS)) {
+                    Toast.makeText(this, R.string.sms_denied, Toast.LENGTH_LONG).show();
+                }
                 openTrip();
             });
 
@@ -83,6 +95,16 @@ public class MainActivity extends AppCompatActivity {
         View btnEdit = findViewById(R.id.btn_edit_contacts);
         ImageView btnLanguage = findViewById(R.id.btn_language);
         Press.attach(btnStart, btnHistory, btnEdit, btnLanguage);   // efeito de "afundar" ao tocar
+
+        // Modo escuro: mostra o modo para o qual o toque vai TROCAR (lua no claro, sol no escuro).
+        ImageView btnTheme = findViewById(R.id.btn_theme);
+        Press.attach(btnTheme);
+        btnTheme.setImageResource(ThemeMode.isDark(this) ? R.drawable.ic_sun : R.drawable.ic_moon);
+        btnTheme.setOnClickListener(v -> {
+            Press.tick(v);
+            // Giro curto do ícone antes de trocar: o toque "responde" antes de a tela ser recriada.
+            v.animate().rotationBy(180f).setDuration(220).withEndAction(() -> ThemeMode.toggle(this)).start();
+        });
 
         // Bandeira: mostra o idioma para o qual o toque vai TROCAR (em inglês aparece o Brasil).
         btnLanguage.setImageResource(Language.isPortuguese(this) ? R.drawable.ic_flag_us : R.drawable.ic_flag_br);
@@ -165,14 +187,20 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, ContactsActivity.class));
             return;
         }
-        // Já temos a permissão de SMS? Então segue. Senão, pergunta (a resposta cai no smsPermission).
-        boolean canSms = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                == PackageManager.PERMISSION_GRANTED;
-        if (canSms) {
+        // Já temos as permissões do SMS? Então segue. Senão, pergunta (a resposta cai no smsPermissions).
+        if (hasAll(SMS_PERMISSIONS)) {
             openTrip();
         } else {
-            smsPermission.launch(Manifest.permission.SEND_SMS);
+            smsPermissions.launch(SMS_PERMISSIONS);
         }
+    }
+
+    /** true se TODAS as permissões da lista já foram concedidas. */
+    private boolean hasAll(String[] permissions) {
+        for (String p : permissions) {
+            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) return false;
+        }
+        return true;
     }
 
     private void openTrip() {

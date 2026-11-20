@@ -54,6 +54,16 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <!-- Modo escuro: lua no claro, sol no escuro (o Java escolhe). Discreto: mesmo
+                 botão redondo do histórico, ícone um pouco menor. -->
+            <ImageButton
+                android:id="@+id/btn_theme"
+                style="@style/Guard.IconButton"
+                android:layout_marginEnd="6dp"
+                android:contentDescription="@string/change_theme"
+                android:padding="12dp"
+                android:src="@drawable/ic_moon" />
+
             <!-- Idioma: bandeira do idioma para o qual vai trocar (o Java escolhe BR ou US).
                  Sem o estilo IconButton porque ele pinta o ícone de uma cor só (tint). -->
             <ImageButton
@@ -107,14 +117,14 @@
                 android:id="@+id/btn_car"
                 layout="@layout/item_vehicle_tile"
                 android:layout_width="0dp"
-                android:layout_height="92dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
             <include
                 android:id="@+id/btn_moto"
                 layout="@layout/item_vehicle_tile"
                 android:layout_width="0dp"
-                android:layout_height="92dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:layout_weight="1" />
 
@@ -122,7 +132,7 @@
                 android:id="@+id/btn_bike"
                 layout="@layout/item_vehicle_tile"
                 android:layout_width="0dp"
-                android:layout_height="92dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1" />
         </LinearLayout>
 
@@ -211,11 +221,11 @@
                 android:background="@drawable/bg_row"
                 android:drawableStart="@drawable/ic_edit"
                 android:drawablePadding="6dp"
-                android:drawableTint="@color/guard_blue"
+                android:drawableTint="@color/guard_accent"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="10dp"
                 android:text="@string/edit"
-                android:textColor="@color/guard_blue"
+                android:textColor="@color/guard_accent"
                 android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>

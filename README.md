@@ -29,7 +29,8 @@ Não precisa instalar banco de dados: o SQLite já vem no Android e o arquivo `g
 ### Roteiro da demo
 1. O app já abre com 3 contatos: **1º alguém do grupo**, **2º o professor** e um 3º só para mostrar o botão de excluir (número inválido, não recebe nada). Em **Edit** dá para adicionar ou remover.
 2. A bandeira no canto superior da tela inicial troca o app entre **inglês** e **português** (abre sempre em inglês; a escolha fica salva).
-3. Escolha o veículo e toque em **Start trip**. Na primeira vez o Android pergunta se o Guard pode enviar SMS.
+   Ao lado, a lua liga o **modo escuro** (o sol volta para o claro). A escolha também fica salva.
+3. Escolha o veículo e toque em **Start trip**. Na primeira vez o Android pede duas permissões: **SMS** e **Telefone** (sem a de Telefone, vários celulares dão `SecurityException` ao enviar). Permita as duas.
 4. Na tela escura, toque num cenário: `Real crash`, `Phone dropped`, `Hard brake`, `Speed bump`...
 5. No `Real crash` aparece **Are you OK?** com **15 s**. Deixe zerar para ver o alerta e o escalonamento (10 s por contato), ou toque **I'm OK**.
 6. Depois toque em **End trip** e abra **History** para ver a viagem salva.

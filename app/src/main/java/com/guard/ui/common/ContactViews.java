@@ -23,9 +23,9 @@ public final class ContactViews {
      * int[][] = array de arrays: cada posição guarda um par {fundo, texto}.
      */
     private static final int[][] AVATAR_COLORS = {
-            {R.color.guard_ice, R.color.guard_blue},
-            {R.color.avatar_orange_bg, R.color.guard_alert_dark},
-            {R.color.avatar_green_bg, R.color.guard_ok_dark},
+            {R.color.guard_ice, R.color.guard_accent},
+            {R.color.avatar_orange_bg, R.color.guard_alert_text},
+            {R.color.avatar_green_bg, R.color.guard_ok_text},
     };
 
     private ContactViews() { }

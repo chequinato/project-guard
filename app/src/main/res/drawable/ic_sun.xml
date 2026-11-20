@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícone 'sun' da biblioteca Lucide (licença ISC). Aparece no modo escuro: toque para voltar ao claro. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:pathData="M 16,12 A 4,4 0 0,1 12,16 A 4,4 0 0,1 8,12 A 4,4 0 0,1 12,8 A 4,4 0 0,1 16,12 Z" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M 12,2 v 2 M 12,20 v 2 M 4.93,4.93 l 1.41,1.41 M 17.66,17.66 l 1.41,1.41 M 2,12 h 2 M 20,12 h 2 M 6.34,17.66 l -1.41,1.41 M 19.07,4.93 l -1.41,1.41" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

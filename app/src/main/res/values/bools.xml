@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícones da barra de status ESCUROS (para fundo claro). No modo escuro vira false (values-night/bools.xml). -->
+<resources>
+    <bool name="guard_light_bars">true</bool>
+</resources>

@@ -7,9 +7,10 @@
 -->
 <resources>
 
-    <!-- Tema base: telas claras -->
-    <style name="Theme.Guard" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">@color/guard_blue</item>
+    <!-- Tema base. DayNight = claro ou escuro, conforme o botão da lua (as cores vêm de
+         values/ ou values-night/ sozinhas). -->
+    <style name="Theme.Guard" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/guard_accent</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/guard_alert</item>
         <item name="colorControlHighlight">#1A104FB6</item>
@@ -17,8 +18,13 @@
         <item name="android:windowBackground">@color/guard_page</item>
         <item name="android:statusBarColor">@color/guard_page</item>
         <item name="android:navigationBarColor">@color/guard_page</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">@bool/guard_light_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/guard_light_bars</item>
+        <!-- Superfícies do Material (caixas de diálogo, campos): seguem as cores do Guard -->
+        <item name="colorSurface">@color/guard_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/guard_surface</item>
+        <item name="colorOnSurface">@color/guard_ink</item>
+        <item name="colorOnSurfaceVariant">@color/guard_muted</item>
         <item name="android:textColorPrimary">@color/guard_ink</item>
         <item name="android:textColorSecondary">@color/guard_muted</item>
         <!-- Fonte padrão de TODO texto do app: Funnel Sans, a mesma do site -->
@@ -126,8 +132,9 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:lineSpacingMultiplier">1.05</item>
-        <!-- 2 linhas: em português "Queda de velocidade" não cabe em uma -->
-        <item name="android:maxLines">2</item>
+        <!-- Pode quebrar linha: em português "Queda de velocidade" não cabe em uma,
+             e com a fonte do celular ampliada pode precisar de 3. Nada fica cortado. -->
+        <item name="android:maxLines">3</item>
     </style>
 
     <!-- Bloco de cenário (tela de viagem): metade da largura, texto centralizado em até 2 linhas -->
@@ -143,7 +150,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:maxLines">2</item>
+        <item name="android:maxLines">3</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
@@ -156,12 +163,12 @@
         <item name="boxCornerRadiusTopEnd">14dp</item>
         <item name="boxCornerRadiusBottomStart">14dp</item>
         <item name="boxCornerRadiusBottomEnd">14dp</item>
-        <item name="boxStrokeColor">@color/guard_blue</item>
-        <item name="hintTextColor">@color/guard_blue</item>
+        <item name="boxStrokeColor">@color/guard_accent</item>
+        <item name="hintTextColor">@color/guard_accent</item>
         <!-- Erro e dica nas cores do Guard (não no vermelho padrão do Material) -->
-        <item name="boxStrokeErrorColor">@color/guard_alert_dark</item>
-        <item name="errorTextColor">@color/guard_alert_dark</item>
-        <item name="errorIconTint">@color/guard_alert_dark</item>
+        <item name="boxStrokeErrorColor">@color/guard_alert_text</item>
+        <item name="errorTextColor">@color/guard_alert_text</item>
+        <item name="errorIconTint">@color/guard_alert_text</item>
         <item name="helperTextTextColor">@color/guard_muted</item>
     </style>
 

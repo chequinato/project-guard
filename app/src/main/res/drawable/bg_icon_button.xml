@@ -3,7 +3,7 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="?attr/colorControlHighlight">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/white" />
+            <solid android:color="@color/guard_surface" />
         </shape>
     </item>
 </ripple>

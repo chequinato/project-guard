@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    MODO ESCURO. O Android usa esta pasta (values-night) no lugar de values/ quando o modo escuro
+    está ligado (botão da lua na tela inicial). Só as cores que mudam estão aqui; as outras
+    continuam vindo de values/colors.xml.
+
+    A ideia: o mesmo azul-marinho da tela de viagem e do site, em 3 camadas
+    (página < cartão < linha), texto quase branco e tons mais claros para azul, laranja e verde,
+    para manter o contraste sem "estourar" o olho.
+-->
+<resources>
+    <color name="guard_page">#0B1132</color>
+    <color name="guard_surface">#151D4A</color>
+    <color name="guard_line">#26306A</color>
+    <color name="guard_ink">#EEF1FB</color>
+    <color name="guard_muted">#A3ACCE</color>
+    <color name="guard_ice">#1F2D6E</color>
+
+    <color name="guard_accent">#93B1F5</color>
+    <color name="guard_alert_text">#FF8B5E</color>
+    <color name="guard_ok_text">#55D9A0</color>
+
+    <color name="avatar_orange_bg">#3A2420</color>
+    <color name="avatar_green_bg">#123A30</color>
+</resources>
