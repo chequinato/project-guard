@@ -40,6 +40,7 @@
     <string name="edit">Edit</string>
     <string name="no_contacts">No emergency contacts yet. Add at least one before your trip.</string>
     <string name="start_trip">Start trip</string>
+    <string name="location_denied">No location permission: the SMS will carry the simulated location.</string>
     <string name="sms_denied">Without the SMS and Phone permissions, alerts run in demo mode (no real message and no reply detection).</string>
 
     <!-- Tela 2 · Trip mode (ui/trip/TripActivity) -->
@@ -79,6 +80,8 @@
     <string name="im_ok">I\'m OK</string>
     <string name="alert_sent">Alert sent</string>
     <string name="live_location">Live location</string>
+    <string name="location_live">Live location (±%1$d m)</string>
+    <string name="location_simulated">Simulated location (GPS off)</string>
     <string name="alert_title">%1$s has your location</string>
     <string name="notif_header">Guard · now</string>
     <string name="alert_next">No reply in %1$d s? %2$s is next.</string>

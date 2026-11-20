@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
      * registerForActivityResult: registramos ANTES (no momento em que a tela é criada)
      * o que fazer quando o usuário responder. A resposta chega na lambda: um Map
      * "permissão -> permitiu?". Permitindo ou não, a viagem começa: sem SMS, o alerta
-     * roda em modo demonstração.
+     * roda em modo demonstração; sem localização, o link usa a posição simulada.
      */
     private static final String[] SMS_PERMISSIONS = {
             Manifest.permission.SEND_SMS,
@@ -67,10 +67,18 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.RECEIVE_SMS
     };
 
-    private final ActivityResultLauncher<String[]> smsPermissions =
+    /** Localização REAL do celular, para o link do mapa no SMS. Basta uma das duas (precisa ou aproximada). */
+    private static final String[] LOCATION_PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
+    private final ActivityResultLauncher<String[]> tripPermissions =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
                 if (!hasAll(SMS_PERMISSIONS)) {
                     Toast.makeText(this, R.string.sms_denied, Toast.LENGTH_LONG).show();
+                } else if (!hasAny(LOCATION_PERMISSIONS)) {
+                    Toast.makeText(this, R.string.location_denied, Toast.LENGTH_LONG).show();
                 }
                 openTrip();
             });
@@ -189,12 +197,25 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, ContactsActivity.class));
             return;
         }
-        // Já temos as permissões do SMS? Então segue. Senão, pergunta (a resposta cai no smsPermissions).
-        if (hasAll(SMS_PERMISSIONS)) {
+        // Já temos as permissões (SMS e localização)? Então segue. Senão, pergunta tudo de uma vez
+        // (a resposta cai no tripPermissions). O Android só mostra as que ainda faltam.
+        if (hasAll(SMS_PERMISSIONS) && hasAny(LOCATION_PERMISSIONS)) {
             openTrip();
         } else {
-            smsPermissions.launch(SMS_PERMISSIONS);
+            String[] all = new String[SMS_PERMISSIONS.length + LOCATION_PERMISSIONS.length];
+            // arraycopy(origem, de onde, destino, para onde, quantos): junta as duas listas numa só.
+            System.arraycopy(SMS_PERMISSIONS, 0, all, 0, SMS_PERMISSIONS.length);
+            System.arraycopy(LOCATION_PERMISSIONS, 0, all, SMS_PERMISSIONS.length, LOCATION_PERMISSIONS.length);
+            tripPermissions.launch(all);
         }
+    }
+
+    /** true se PELO MENOS UMA permissão da lista foi concedida. */
+    private boolean hasAny(String[] permissions) {
+        for (String p : permissions) {
+            if (ContextCompat.checkSelfPermission(this, p) == PackageManager.PERMISSION_GRANTED) return true;
+        }
+        return false;
     }
 
     /** true se TODAS as permissões da lista já foram concedidas. */

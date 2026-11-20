@@ -30,6 +30,7 @@
     <string name="edit">Editar</string>
     <string name="no_contacts">Nenhum contato de emergência ainda. Cadastre pelo menos um antes da viagem.</string>
     <string name="start_trip">Iniciar viagem</string>
+    <string name="location_denied">Sem permissão de localização: o SMS vai com a posição simulada.</string>
     <string name="sms_denied">Sem as permissões de SMS e Telefone, os alertas rodam em modo demonstração (sem mensagem de verdade e sem ler a resposta).</string>
 
     <!-- Tela 2 · Modo viagem -->
@@ -69,6 +70,8 @@
     <string name="im_ok">Estou bem</string>
     <string name="alert_sent">Alerta enviado</string>
     <string name="live_location">Localização ao vivo</string>
+    <string name="location_live">Localização ao vivo (±%1$d m)</string>
+    <string name="location_simulated">Localização simulada (GPS desligado)</string>
     <string name="alert_title">%1$s tem sua localização</string>
     <string name="notif_header">Guard · agora</string>
     <string name="alert_next">Sem resposta em %1$d s? %2$s é o próximo.</string>

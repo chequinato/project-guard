@@ -22,8 +22,11 @@ public class Incident {
 
     private long id;
     private final long timestampMillis;
-    private final double latitude;
-    private final double longitude;
+    // NÃO são final: começam com a posição da leitura do sensor e são trocadas pelo GPS
+    // de verdade do celular assim que ele responde (updateLocation).
+    private double latitude;
+    private double longitude;
+    private boolean fromGps;   // true = a posição atual veio do GPS do celular
     private final VehicleType vehicleType;
 
     // Valor inicial direto na declaração: todo incidente nasce em COUNTDOWN.
@@ -42,6 +45,21 @@ public class Incident {
     public double getLatitude() { return latitude; }
     public double getLongitude() { return longitude; }
     public VehicleType getVehicleType() { return vehicleType; }
+    public boolean isFromGps() { return fromGps; }
+
+    /**
+     * Posição real do celular (GPS). A tela de alerta chama isto a cada nova leitura,
+     * então cada SMS (inclusive o do próximo contato) sai com a posição mais recente.
+     */
+    public void updateLocation(double latitude, double longitude) {
+        // Latitude vai de -90 a 90 e longitude de -180 a 180: fora disso é dado quebrado.
+        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("Invalid location: " + latitude + ", " + longitude);
+        }
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.fromGps = true;
+    }
     public IncidentStatus getStatus() { return status; }
 
     /** Link do Google Maps que vai na mensagem de emergência. */

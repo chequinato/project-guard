@@ -101,4 +101,17 @@ public class ModelTest {
         assertEquals(60_000, trip.getDurationMillis());
         assertFalse(trip.isActive());
     }
+
+    @Test
+    public void realLocationReplacesTheSimulatedOneInTheMapLink() {
+        Incident incident = new Incident(0, -23.1857, -46.8978, VehicleType.MOTORCYCLE);
+        incident.updateLocation(-23.550520, -46.633308);   // posição real (GPS)
+        assertEquals("https://maps.google.com/?q=-23.550520,-46.633308", incident.getMapLink());
+        assertTrue(incident.isFromGps());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsAnImpossibleLocation() {
+        new Incident(0, 0, 0, VehicleType.CAR).updateLocation(123, 0);   // latitude não passa de 90
+    }
 }

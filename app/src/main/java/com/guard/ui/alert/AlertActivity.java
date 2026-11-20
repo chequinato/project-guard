@@ -46,6 +46,7 @@ import com.guard.model.EmergencyContact;
 import com.guard.model.Incident;
 import com.guard.model.IncidentStatus;
 import com.guard.model.User;
+import com.guard.sensor.PhoneLocation;
 import com.guard.session.TripSession;
 import com.guard.ui.common.Press;
 import com.guard.ui.common.VehicleUi;
@@ -84,6 +85,9 @@ public class AlertActivity extends AppCompatActivity {
     private SmsAlert smsChannel;         // guardado para ler o motivo de um erro de envio
     private View btnSmsApp;              // plano B: abrir o app de mensagens do celular
     private boolean listeningReplies;    // true = estamos lendo os SMS que chegam (respostas)
+    private PhoneLocation phoneLocation; // GPS de verdade do celular (vai no link do mapa)
+    private TextView txtLocation;        // selo "Localização ao vivo (±15 m)"
+    private TextView txtMessage;         // prévia do SMS (atualiza quando a posição melhora)
 
     /**
      * Escuta os SMS que CHEGAM no celular enquanto o alerta está na tela.
@@ -176,6 +180,9 @@ public class AlertActivity extends AppCompatActivity {
         txtAlertDetail = findViewById(R.id.txt_alert_detail);
         listQueue = findViewById(R.id.list_queue);
         txtSmsStatus = findViewById(R.id.txt_sms_status);
+        txtLocation = findViewById(R.id.txt_location);
+        txtMessage = findViewById(R.id.txt_message);
+        startRealLocation();
         btnSmsApp = findViewById(R.id.btn_sms_app);
         Press.attach(btnSmsApp);
         btnSmsApp.setOnClickListener(v -> openSmsApp());
@@ -259,7 +266,7 @@ public class AlertActivity extends AppCompatActivity {
         }
         alertService.start(user, incident);
         vibrate(new long[]{0, 120, 80, 120});
-        ((TextView) findViewById(R.id.txt_message)).setText(alertService.getMessage());
+        txtMessage.setText(alertService.getMessage());
         switchPanel(panelCount, panelAlert);
         showCurrentContact();
     }
@@ -365,6 +372,26 @@ public class AlertActivity extends AppCompatActivity {
         // Entrada suave a cada mudança, para o olho perceber que o status mudou.
         txtSmsStatus.setAlpha(0f);
         txtSmsStatus.animate().alpha(1f).setDuration(220).start();
+    }
+
+    // ========== Localização real ==========
+
+    /**
+     * Liga o GPS assim que a tela abre: os 15 s da contagem dão tempo de achar uma boa posição
+     * antes do primeiro SMS. Cada posição nova substitui a do sensor simulado no incidente,
+     * então o link do mapa (e cada SMS seguinte) sai com o lugar de verdade.
+     */
+    private void startRealLocation() {
+        phoneLocation = new PhoneLocation(this);
+        boolean on = phoneLocation.start(location -> {
+            incident.updateLocation(location.getLatitude(), location.getLongitude());
+            int meters = Math.max(1, Math.round(location.getAccuracy()));
+            txtLocation.setText(getString(R.string.location_live, meters));
+            // Se a prévia do SMS já está na tela, mostra o link novo.
+            if (incident.getStatus() != IncidentStatus.COUNTDOWN) txtMessage.setText(alertService.getMessage());
+        });
+        // Sem permissão ou com a localização desligada: avisamos que o link usa a posição simulada.
+        if (!on) txtLocation.setText(R.string.location_simulated);
     }
 
     /** Desenha a fila: quem já foi avisado ("Alerted"), o próximo ("Next") e os outros ("Waiting"). */
@@ -506,6 +533,7 @@ public class AlertActivity extends AppCompatActivity {
         cancelTimers();
         if (realSms) unregisterReceiver(smsResult);          // parar de escutar quando a tela fecha
         if (listeningReplies) unregisterReceiver(smsReply);
+        if (phoneLocation != null) phoneLocation.stop();     // desliga o GPS (bateria)
         super.onDestroy();
     }
 }
