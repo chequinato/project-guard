@@ -119,7 +119,8 @@
     <!-- Um dos 4 sinais do modo viagem (ícone + nome). Fundo e cor mudam quando ativo. -->
     <style name="Guard.Signal" parent="">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <!-- match_parent dentro da linha: os 2 blocos ficam com a altura do MAIOR -->
         <item name="android:minHeight">52dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_signal</item>
@@ -140,7 +141,8 @@
     <!-- Bloco de cenário (tela de viagem): metade da largura, texto centralizado em até 2 linhas -->
     <style name="Guard.Scenario" parent="">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <!-- match_parent dentro da linha: os 2 blocos ficam com a altura do MAIOR -->
         <item name="android:minHeight">56dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_scenario</item>
